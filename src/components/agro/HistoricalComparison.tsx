@@ -7,7 +7,10 @@ const columns = [
 
 export function HistoricalComparison() {
   return (
-    <section className="rounded-2xl border border-soil-brown/10 bg-card p-8">
+    <section
+      data-tour="history"
+      className="rounded-2xl border border-soil-brown/10 bg-card p-8"
+    >
       <div className="mb-8 flex items-end justify-between">
         <div>
           <h3 className="font-serif text-xl">Comparação Histórica</h3>

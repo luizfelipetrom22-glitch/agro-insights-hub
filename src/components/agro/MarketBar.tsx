@@ -7,9 +7,12 @@ const tickers = [
   { label: "Clima (MT)", value: "28°C Sol", change: null, dir: "flat" as const },
 ];
 
-export function MarketBar() {
+export function MarketBar({ onHelp }: { onHelp?: () => void }) {
   return (
-    <div className="sticky top-0 z-50 flex items-center justify-between border-b border-harvest-green-foreground/10 bg-harvest-green px-6 py-2.5 text-xs font-medium text-harvest-green-foreground">
+    <div
+      data-tour="market-bar"
+      className="sticky top-0 z-50 flex items-center justify-between border-b border-harvest-green-foreground/10 bg-harvest-green px-6 py-2.5 text-xs font-medium text-harvest-green-foreground"
+    >
       <div className="flex gap-8 overflow-x-auto">
         {tickers.map((t) => (
           <div key={t.label} className="flex items-center gap-2 whitespace-nowrap">
@@ -44,7 +47,12 @@ export function MarketBar() {
       <div className="hidden shrink-0 items-center gap-4 pl-6 md:flex">
         <span className="whitespace-nowrap opacity-60">12 Mar, 2024</span>
         <div className="h-4 w-px bg-harvest-green-foreground/20" />
-        <button className="transition-colors hover:text-clay">Ajuda</button>
+        <button
+          onClick={onHelp}
+          className="transition-colors hover:text-clay"
+        >
+          Ajuda
+        </button>
       </div>
     </div>
   );

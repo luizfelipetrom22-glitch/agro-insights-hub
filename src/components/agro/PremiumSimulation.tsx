@@ -11,6 +11,7 @@ export function PremiumSimulation() {
   return (
     <section
       id="premium"
+      data-tour="premium"
       className="relative overflow-hidden rounded-3xl bg-soil-brown p-8 text-soil-brown-foreground"
     >
       <div className="relative z-10 max-w-xl">

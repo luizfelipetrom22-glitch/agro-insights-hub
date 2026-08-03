@@ -25,7 +25,10 @@ const news = [
 
 export function InsightAndNews() {
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+    <div
+      data-tour="insight-news"
+      className="grid grid-cols-1 gap-8 md:grid-cols-2"
+    >
       <div className="space-y-4">
         <h3 className="flex items-center gap-2 font-serif text-xl">
           Análise de Mercado IA
