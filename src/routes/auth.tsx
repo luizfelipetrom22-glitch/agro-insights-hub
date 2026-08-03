@@ -43,7 +43,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const redirectTo = search.redirect || "/painel";
+  const redirectTo = search["redirect"] || "/painel";
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
