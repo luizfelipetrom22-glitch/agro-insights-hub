@@ -12,12 +12,13 @@ type SignInOptions = {
 export const lovable = {
   auth: {
     signInWithOAuth: async (provider: "google" | "apple" | "microsoft" | "lovable", opts?: SignInOptions) => {
-      const result = await lovableAuth.signInWithOAuth(provider, {
-        redirect_uri: opts?.redirect_uri,
-        extraParams: {
-          ...opts?.extraParams,
-        },
-      });
+      const oauthOpts: { redirect_uri?: string; extraParams?: Record<string, string> } = {
+        extraParams: { ...opts?.extraParams },
+      };
+      if (opts?.redirect_uri) {
+        oauthOpts.redirect_uri = opts.redirect_uri;
+      }
+      const result = await lovableAuth.signInWithOAuth(provider, oauthOpts);
 
       if (result.redirected) {
         return result;
