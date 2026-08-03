@@ -1,5 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { TOUR_STEPS, useOnboardingTour } from "@/hooks/use-onboarding-tour";
+import {
+  TOUR_STEPS,
+  useOnboardingTour,
+  type TourStep,
+} from "@/hooks/use-onboarding-tour";
 
 type Rect = {
   top: number;
