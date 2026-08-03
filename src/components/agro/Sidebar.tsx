@@ -12,7 +12,10 @@ const events = [
 
 export function Sidebar() {
   return (
-    <aside className="col-span-12 space-y-8 lg:col-span-3">
+    <aside
+      data-tour="sidebar"
+      className="col-span-12 space-y-8 lg:col-span-3"
+    >
       <div>
         <h1 className="mb-1 font-serif text-3xl text-harvest-green">TerraIntelligence</h1>
         <p className="font-serif text-sm italic text-soil-brown/60">
