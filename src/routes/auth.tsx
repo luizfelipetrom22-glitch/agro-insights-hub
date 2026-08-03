@@ -23,7 +23,7 @@ export const Route = createFileRoute("/auth")({
     // Already signed in? Skip the auth page.
     const { data } = await supabase.auth.getSession();
     if (data.session) {
-      const next = (search as { redirect?: string })?.redirect;
+      const next = (search as { redirect?: string })["redirect"];
       throw redirect({ to: next ? next : "/painel" } as never);
     }
   },
