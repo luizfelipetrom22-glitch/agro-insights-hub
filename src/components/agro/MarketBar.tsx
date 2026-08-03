@@ -41,8 +41,8 @@ export function MarketBar() {
           </div>
         ))}
       </div>
-      <div className="hidden items-center gap-4 md:flex">
-        <span className="opacity-60">12 Mar, 2024</span>
+      <div className="hidden shrink-0 items-center gap-4 pl-6 md:flex">
+        <span className="whitespace-nowrap opacity-60">12 Mar, 2024</span>
         <div className="h-4 w-px bg-harvest-green-foreground/20" />
         <button className="transition-colors hover:text-clay">Ajuda</button>
       </div>
