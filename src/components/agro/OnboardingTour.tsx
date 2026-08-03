@@ -1,7 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { TOUR_STEPS, useOnboardingTour } from "@/hooks/use-onboarding-tour";
 
-type Rect = { top: number; left: number; width: number; height: number };
+type Rect = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  bottom: number;
+  right: number;
+};
 
 const GAP = 16;
 
@@ -39,6 +46,8 @@ export function OnboardingTour() {
         left: r.left,
         width: r.width,
         height: r.height,
+        bottom: r.bottom,
+        right: r.right,
       };
       setRect(next);
 

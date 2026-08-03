@@ -98,11 +98,10 @@ export function useOnboardingTour() {
   // Auto-start on first visit (after hydration, browser-only).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!hasSeenTour()) {
-      // small delay so the page is painted
-      const t = window.setTimeout(start, 600);
-      return () => window.clearTimeout(t);
-    }
+    if (hasSeenTour()) return;
+    // small delay so the page is painted
+    const t = window.setTimeout(start, 600);
+    return () => window.clearTimeout(t);
   }, [start]);
 
   return { active, step, start, next, prev, dismiss, skip };
