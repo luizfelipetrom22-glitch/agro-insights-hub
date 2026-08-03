@@ -1,24 +1,42 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { MarketBar } from "@/components/agro/MarketBar";
+import { Sidebar } from "@/components/agro/Sidebar";
+import { PremiumSimulation } from "@/components/agro/PremiumSimulation";
+import { InsightAndNews } from "@/components/agro/InsightAndNews";
+import { HistoricalComparison } from "@/components/agro/HistoricalComparison";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "TerraIntelligence — Inteligência de mercado para o agro" },
+      {
+        name: "description",
+        content:
+          "Preços de commodities, clima, dólar, notícias, calendário agrícola e relatórios de IA em um só painel.",
+      },
+      { property: "og:title", content: "TerraIntelligence — Inteligência de mercado para o agro" },
+      {
+        property: "og:description",
+        content:
+          "Painel com cotações, clima, dólar, notícias do agronegócio e análises geradas por IA.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background font-sans text-soil-brown selection:bg-clay/20">
+      <MarketBar />
+      <div className="mx-auto grid max-w-[1400px] grid-cols-12 gap-8 p-8">
+        <Sidebar />
+        <main className="col-span-12 space-y-8 lg:col-span-9">
+          <PremiumSimulation />
+          <InsightAndNews />
+          <HistoricalComparison />
+        </main>
+      </div>
     </div>
   );
 }
