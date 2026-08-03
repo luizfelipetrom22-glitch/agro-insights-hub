@@ -1,9 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import {
-  TOUR_STEPS,
-  useOnboardingTour,
-  type TourStep,
-} from "@/hooks/use-onboarding-tour";
+import { TOUR_STEPS } from "@/hooks/use-onboarding-tour";
+
+type TourApi = {
+  active: boolean;
+  step: number;
+  next: () => void;
+  prev: () => void;
+  dismiss: () => void;
+  skip: () => void;
+};
 
 type Rect = {
   top: number;
@@ -16,8 +21,7 @@ type Rect = {
 
 const GAP = 16;
 
-export function OnboardingTour() {
-  const tour = useOnboardingTour();
+export function OnboardingTour({ tour }: { tour: TourApi }) {
   const { active, step } = tour;
   const current = TOUR_STEPS[step];
 
