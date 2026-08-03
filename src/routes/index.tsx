@@ -4,6 +4,8 @@ import { Sidebar } from "@/components/agro/Sidebar";
 import { PremiumSimulation } from "@/components/agro/PremiumSimulation";
 import { InsightAndNews } from "@/components/agro/InsightAndNews";
 import { HistoricalComparison } from "@/components/agro/HistoricalComparison";
+import { OnboardingTour } from "@/components/agro/OnboardingTour";
+import { useOnboardingTour } from "@/hooks/use-onboarding-tour";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,9 +28,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const tour = useOnboardingTour();
+
   return (
     <div className="min-h-screen bg-background font-sans text-soil-brown selection:bg-clay/20">
-      <MarketBar />
+      <MarketBar onHelp={tour.start} />
       <div className="mx-auto grid max-w-[1400px] grid-cols-12 gap-8 p-8">
         <Sidebar />
         <main className="col-span-12 space-y-8 lg:col-span-9">
@@ -37,6 +41,7 @@ function Index() {
           <HistoricalComparison />
         </main>
       </div>
+      <OnboardingTour tour={tour} />
     </div>
   );
 }
