@@ -1,9 +1,11 @@
+import { Link, useRouterState } from "@tanstack/react-router";
+
 const nav = [
-  { label: "Painel Geral", active: true, premium: false },
-  { label: "Calendário Agrícola", active: false, premium: false },
-  { label: "Relatórios IA", active: false, premium: false },
-  { label: "Simulador de Lucro", active: false, premium: true },
-];
+  { label: "Painel Geral", to: "/painel", premium: false },
+  { label: "Calendário Agrícola", to: "/calendario", premium: false },
+  { label: "Relatórios IA", to: "/relatorios", premium: false },
+  { label: "Simulador de Lucro", to: "/simulador", premium: true },
+] as const;
 
 const events = [
   { month: "MAR", day: "15", title: "Início Plantio Safrinha", note: "Previsão de chuva ideal" },
@@ -11,11 +13,10 @@ const events = [
 ];
 
 export function Sidebar() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
   return (
-    <aside
-      data-tour="sidebar"
-      className="col-span-12 space-y-8 lg:col-span-3"
-    >
+    <aside data-tour="sidebar" className="col-span-12 space-y-8 lg:col-span-3">
       <div>
         <h1 className="mb-1 font-serif text-3xl text-harvest-green">TerraIntelligence</h1>
         <p className="font-serif text-sm italic text-soil-brown/60">
@@ -24,32 +25,27 @@ export function Sidebar() {
       </div>
 
       <nav className="space-y-1">
-        {nav.map((item) =>
-          item.premium ? (
-            <a
-              key={item.label}
-              href="#premium"
-              className="flex items-center justify-between rounded-lg border border-clay/10 bg-clay/5 px-4 py-3 font-semibold text-clay"
-            >
-              {item.label}
-              <span className="rounded bg-clay px-1.5 py-0.5 text-[10px] uppercase tracking-tighter text-clay-foreground">
-                Premium
-              </span>
-            </a>
-          ) : (
-            <a
-              key={item.label}
-              href="#"
-              className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-colors ${
-                item.active
+        {nav.map((item) => {
+          const active = pathname === item.to;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`flex items-center justify-between rounded-lg px-4 py-3 transition-colors ${
+                active
                   ? "bg-harvest-green font-medium text-harvest-green-foreground"
                   : "text-soil-brown/70 hover:bg-soil-brown/5"
               }`}
             >
-              {item.label}
-            </a>
-          ),
-        )}
+              <span>{item.label}</span>
+              {item.premium && (
+                <span className="rounded bg-clay px-1.5 py-0.5 text-[10px] uppercase tracking-tighter text-clay-foreground">
+                  Premium
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="rounded-2xl border border-soil-brown/10 bg-card p-6">
