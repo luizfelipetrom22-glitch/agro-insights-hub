@@ -14,16 +14,180 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alerts: {
+        Row: {
+          active: boolean
+          commodity: string
+          condition: string
+          created_at: string
+          id: string
+          phone: string | null
+          threshold: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          commodity: string
+          condition: string
+          created_at?: string
+          id?: string
+          phone?: string | null
+          threshold: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          commodity?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          phone?: string | null
+          threshold?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          city: string | null
+          created_at: string
+          crops: string[] | null
+          farm_name: string | null
+          full_name: string | null
+          id: string
+          state: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          crops?: string[] | null
+          farm_name?: string | null
+          full_name?: string | null
+          id?: string
+          state?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          crops?: string[] | null
+          farm_name?: string | null
+          full_name?: string | null
+          id?: string
+          state?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          content: string
+          created_at: string
+          harvest: string | null
+          id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          harvest?: string | null
+          id?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          harvest?: string | null
+          id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      simulations: {
+        Row: {
+          area_hectares: number
+          created_at: string
+          crop: string
+          exchange_rate: number
+          id: string
+          input_cost: number
+          price_per_bag: number
+          result: Json | null
+          updated_at: string
+          user_id: string
+          yield_bags_per_ha: number
+        }
+        Insert: {
+          area_hectares?: number
+          created_at?: string
+          crop: string
+          exchange_rate?: number
+          id?: string
+          input_cost?: number
+          price_per_bag?: number
+          result?: Json | null
+          updated_at?: string
+          user_id: string
+          yield_bags_per_ha?: number
+        }
+        Update: {
+          area_hectares?: number
+          created_at?: string
+          crop?: string
+          exchange_rate?: number
+          id?: string
+          input_cost?: number
+          price_per_bag?: number
+          result?: Json | null
+          updated_at?: string
+          user_id?: string
+          yield_bags_per_ha?: number
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +314,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "admin"],
+    },
   },
 } as const
