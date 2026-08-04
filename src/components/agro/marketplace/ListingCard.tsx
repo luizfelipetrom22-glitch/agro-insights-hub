@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Tables } from "@/integrations/supabase/types";
 import { formatBRL, formatQuantity } from "@/lib/marketplace";
@@ -13,7 +14,7 @@ export function ListingCard({
   listing: Listing;
   favorited?: boolean;
   onToggleFavorite?: (listing: Listing) => void;
-  footer?: React.ReactNode;
+  footer?: ReactNode;
 }) {
   return (
     <article className="flex flex-col justify-between rounded-2xl border border-soil-brown/10 bg-card p-5">
@@ -79,7 +80,7 @@ export function ListingCard({
   );
 }
 
-function Tag({ children }: { children: React.ReactNode }) {
+function Tag({ children }: { children: ReactNode }) {
   return (
     <span className="rounded-full bg-soil-brown/5 px-2 py-0.5 text-[11px] text-soil-brown/60">
       {children}
