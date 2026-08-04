@@ -50,6 +50,184 @@ export type Database = {
         }
         Relationships: []
       }
+      buyer_profiles: {
+        Row: {
+          avatar_url: string | null
+          avg_quantity: number | null
+          city: string | null
+          company: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          interests: string[]
+          phone: string | null
+          state: string | null
+          tax_id: string | null
+          updated_at: string
+          user_id: string
+          verified: boolean
+        }
+        Insert: {
+          avatar_url?: string | null
+          avg_quantity?: number | null
+          city?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[]
+          phone?: string | null
+          state?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          user_id: string
+          verified?: boolean
+        }
+        Update: {
+          avatar_url?: string | null
+          avg_quantity?: number | null
+          city?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[]
+          phone?: string | null
+          state?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          user_id?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      contact_events: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          listing_id: string | null
+          producer_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          producer_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          producer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_events_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string | null
+          producer_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          producer_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          producer_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          certifications: string[]
+          city: string | null
+          created_at: string
+          description: string | null
+          family_farming: boolean
+          harvest: string | null
+          id: string
+          organic: boolean
+          photos: string[]
+          price: number | null
+          product: string
+          quantity: number
+          state: string | null
+          status: string
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          certifications?: string[]
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          family_farming?: boolean
+          harvest?: string | null
+          id?: string
+          organic?: boolean
+          photos?: string[]
+          price?: number | null
+          product: string
+          quantity?: number
+          state?: string | null
+          status?: string
+          unit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          certifications?: string[]
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          family_farming?: boolean
+          harvest?: string | null
+          id?: string
+          organic?: boolean
+          photos?: string[]
+          price?: number | null
+          product?: string
+          quantity?: number
+          state?: string | null
+          status?: string
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           city: string | null
@@ -61,6 +239,7 @@ export type Database = {
           state: string | null
           updated_at: string
           user_id: string
+          user_type: Database["public"]["Enums"]["user_type"]
         }
         Insert: {
           city?: string | null
@@ -72,6 +251,7 @@ export type Database = {
           state?: string | null
           updated_at?: string
           user_id: string
+          user_type?: Database["public"]["Enums"]["user_type"]
         }
         Update: {
           city?: string | null
@@ -81,6 +261,55 @@ export type Database = {
           full_name?: string | null
           id?: string
           state?: string | null
+          updated_at?: string
+          user_id?: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Relationships: []
+      }
+      purchase_requests: {
+        Row: {
+          city: string | null
+          created_at: string
+          deadline: string | null
+          id: string
+          notes: string | null
+          product: string
+          quantity: number
+          state: string | null
+          status: string
+          target_price: number | null
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          notes?: string | null
+          product: string
+          quantity?: number
+          state?: string | null
+          status?: string
+          target_price?: number | null
+          unit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          notes?: string | null
+          product?: string
+          quantity?: number
+          state?: string | null
+          status?: string
+          target_price?: number | null
+          unit?: string
           updated_at?: string
           user_id?: string
         }
@@ -188,6 +417,7 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "admin"
+      user_type: "produtor" | "comprador"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -316,6 +546,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "admin"],
+      user_type: ["produtor", "comprador"],
     },
   },
 } as const

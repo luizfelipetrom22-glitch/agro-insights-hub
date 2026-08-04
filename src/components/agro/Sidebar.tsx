@@ -1,11 +1,25 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useProfile } from "@/hooks/use-profile";
 
-const nav = [
-  { label: "Painel Geral", to: "/painel", premium: false },
-  { label: "Calendário Agrícola", to: "/calendario", premium: false },
-  { label: "Relatórios IA", to: "/relatorios", premium: false },
+type NavItem = { label: string; to: string; premium?: boolean };
+
+const producerNav: NavItem[] = [
+  { label: "Painel Geral", to: "/painel" },
+  { label: "Meus Anúncios", to: "/anuncios" },
+  { label: "Pedidos de Compra", to: "/pedidos" },
+  { label: "Calendário Agrícola", to: "/calendario" },
+  { label: "Relatórios IA", to: "/relatorios" },
   { label: "Simulador de Lucro", to: "/simulador", premium: true },
-] as const;
+];
+
+const buyerNav: NavItem[] = [
+  { label: "Painel do Comprador", to: "/comprador" },
+  { label: "Buscar Produtos", to: "/buscar" },
+  { label: "Favoritos", to: "/favoritos" },
+  { label: "Meus Pedidos", to: "/pedidos" },
+  { label: "Relatórios IA", to: "/relatorios" },
+  { label: "Alertas de Preço", to: "/simulador", premium: true },
+];
 
 const events = [
   { month: "MAR", day: "15", title: "Início Plantio Safrinha", note: "Previsão de chuva ideal" },
@@ -14,14 +28,23 @@ const events = [
 
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { data: session } = useProfile();
+  const isBuyer = session?.userType === "comprador";
+  const nav = isBuyer ? buyerNav : producerNav;
 
   return (
     <aside data-tour="sidebar" className="col-span-12 space-y-8 lg:col-span-3">
       <div>
         <h1 className="mb-1 font-serif text-3xl text-harvest-green">TerraIntelligence</h1>
         <p className="font-serif text-sm italic text-soil-brown/60">
-          Inteligência de mercado para o produtor moderno
+          {isBuyer
+            ? "Marketplace agrícola para compradores"
+            : "Inteligência de mercado para o produtor moderno"}
         </p>
+      </div>
+
+      <div className="inline-flex rounded-full bg-soil-brown/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-soil-brown/60">
+        {isBuyer ? "🛒 Comprador" : "🌾 Produtor"}
       </div>
 
       <nav className="space-y-1">
