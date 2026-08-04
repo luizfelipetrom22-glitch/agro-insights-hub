@@ -407,10 +407,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      current_user_type: {
-        Args: never
-        Returns: Database["public"]["Enums"]["user_type"]
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
