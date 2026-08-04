@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAnunciosRouteImport } from './routes/_authenticated/anuncios'
+import { Route as AuthenticatedBemVindoRouteImport } from './routes/_authenticated/bem-vindo'
 import { Route as AuthenticatedBuscarRouteImport } from './routes/_authenticated/buscar'
 import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authenticated/calendario'
 import { Route as AuthenticatedCompradorRouteImport } from './routes/_authenticated/comprador'
@@ -21,6 +22,7 @@ import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedPedidosRouteImport } from './routes/_authenticated/pedidos'
 import { Route as AuthenticatedRelatoriosRouteImport } from './routes/_authenticated/relatorios'
 import { Route as AuthenticatedSimuladorRouteImport } from './routes/_authenticated/simulador'
+import { Route as ProdutorIdRouteImport } from './routes/produtor.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -39,6 +41,11 @@ const AuthRoute = AuthRouteImport.update({
 const AuthenticatedAnunciosRoute = AuthenticatedAnunciosRouteImport.update({
   id: '/anuncios',
   path: '/anuncios',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBemVindoRoute = AuthenticatedBemVindoRouteImport.update({
+  id: '/bem-vindo',
+  path: '/bem-vindo',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedBuscarRoute = AuthenticatedBuscarRouteImport.update({
@@ -81,11 +88,17 @@ const AuthenticatedSimuladorRoute = AuthenticatedSimuladorRouteImport.update({
   path: '/simulador',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ProdutorIdRoute = ProdutorIdRouteImport.update({
+  id: '/produtor/$id',
+  path: '/produtor/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/anuncios': typeof AuthenticatedAnunciosRoute
+  '/bem-vindo': typeof AuthenticatedBemVindoRoute
   '/buscar': typeof AuthenticatedBuscarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/comprador': typeof AuthenticatedCompradorRoute
@@ -94,11 +107,13 @@ export interface FileRoutesByFullPath {
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/relatorios': typeof AuthenticatedRelatoriosRoute
   '/simulador': typeof AuthenticatedSimuladorRoute
+  '/produtor/$id': typeof ProdutorIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/anuncios': typeof AuthenticatedAnunciosRoute
+  '/bem-vindo': typeof AuthenticatedBemVindoRoute
   '/buscar': typeof AuthenticatedBuscarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/comprador': typeof AuthenticatedCompradorRoute
@@ -107,6 +122,7 @@ export interface FileRoutesByTo {
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/relatorios': typeof AuthenticatedRelatoriosRoute
   '/simulador': typeof AuthenticatedSimuladorRoute
+  '/produtor/$id': typeof ProdutorIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -114,6 +130,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/anuncios': typeof AuthenticatedAnunciosRoute
+  '/_authenticated/bem-vindo': typeof AuthenticatedBemVindoRoute
   '/_authenticated/buscar': typeof AuthenticatedBuscarRoute
   '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
   '/_authenticated/comprador': typeof AuthenticatedCompradorRoute
@@ -122,6 +139,7 @@ export interface FileRoutesById {
   '/_authenticated/pedidos': typeof AuthenticatedPedidosRoute
   '/_authenticated/relatorios': typeof AuthenticatedRelatoriosRoute
   '/_authenticated/simulador': typeof AuthenticatedSimuladorRoute
+  '/produtor/$id': typeof ProdutorIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -129,6 +147,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/anuncios'
+    | '/bem-vindo'
     | '/buscar'
     | '/calendario'
     | '/comprador'
@@ -137,11 +156,13 @@ export interface FileRouteTypes {
     | '/pedidos'
     | '/relatorios'
     | '/simulador'
+    | '/produtor/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/anuncios'
+    | '/bem-vindo'
     | '/buscar'
     | '/calendario'
     | '/comprador'
@@ -150,12 +171,14 @@ export interface FileRouteTypes {
     | '/pedidos'
     | '/relatorios'
     | '/simulador'
+    | '/produtor/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/anuncios'
+    | '/_authenticated/bem-vindo'
     | '/_authenticated/buscar'
     | '/_authenticated/calendario'
     | '/_authenticated/comprador'
@@ -164,12 +187,14 @@ export interface FileRouteTypes {
     | '/_authenticated/pedidos'
     | '/_authenticated/relatorios'
     | '/_authenticated/simulador'
+    | '/produtor/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ProdutorIdRoute: typeof ProdutorIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -200,6 +225,13 @@ declare module '@tanstack/react-router' {
       path: '/anuncios'
       fullPath: '/anuncios'
       preLoaderRoute: typeof AuthenticatedAnunciosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/bem-vindo': {
+      id: '/_authenticated/bem-vindo'
+      path: '/bem-vindo'
+      fullPath: '/bem-vindo'
+      preLoaderRoute: typeof AuthenticatedBemVindoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/buscar': {
@@ -258,11 +290,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSimuladorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/produtor/$id': {
+      id: '/produtor/$id'
+      path: '/produtor/$id'
+      fullPath: '/produtor/$id'
+      preLoaderRoute: typeof ProdutorIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnunciosRoute: typeof AuthenticatedAnunciosRoute
+  AuthenticatedBemVindoRoute: typeof AuthenticatedBemVindoRoute
   AuthenticatedBuscarRoute: typeof AuthenticatedBuscarRoute
   AuthenticatedCalendarioRoute: typeof AuthenticatedCalendarioRoute
   AuthenticatedCompradorRoute: typeof AuthenticatedCompradorRoute
@@ -275,6 +315,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnunciosRoute: AuthenticatedAnunciosRoute,
+  AuthenticatedBemVindoRoute: AuthenticatedBemVindoRoute,
   AuthenticatedBuscarRoute: AuthenticatedBuscarRoute,
   AuthenticatedCalendarioRoute: AuthenticatedCalendarioRoute,
   AuthenticatedCompradorRoute: AuthenticatedCompradorRoute,
@@ -292,6 +333,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ProdutorIdRoute: ProdutorIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
