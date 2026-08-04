@@ -116,12 +116,21 @@ function BuscarPage() {
           onChange={setCertification}
           options={["", ...CERTIFICATIONS]}
         />
-        <Select
-          label="Ordenar por"
-          value={sort}
-          onChange={(v) => setSort(v as typeof sort)}
-          options={["recentes", "menor", "maior", "proximos"]}
-        />
+        <label className="block">
+          <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-soil-brown/50">
+            Ordenar por
+          </span>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as typeof sort)}
+            className={inputClass}
+          >
+            <option value="recentes">Mais recentes</option>
+            <option value="menor">Menor preço</option>
+            <option value="maior">Maior preço</option>
+            <option value="proximos">Mais próximos</option>
+          </select>
+        </label>
         <label className="col-span-2 flex items-center gap-2 text-sm md:col-span-1">
           <input type="checkbox" checked={organic} onChange={(e) => setOrganic(e.target.checked)} />
           Somente orgânicos
