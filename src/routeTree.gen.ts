@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAnunciosRouteImport } from './routes/_authenticated/anuncios'
 import { Route as AuthenticatedBuscarRouteImport } from './routes/_authenticated/buscar'
 import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authenticated/calendario'
+import { Route as AuthenticatedCompradorRouteImport } from './routes/_authenticated/comprador'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedPedidosRouteImport } from './routes/_authenticated/pedidos'
@@ -50,6 +51,11 @@ const AuthenticatedCalendarioRoute = AuthenticatedCalendarioRouteImport.update({
   path: '/calendario',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCompradorRoute = AuthenticatedCompradorRouteImport.update({
+  id: '/comprador',
+  path: '/comprador',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/anuncios': typeof AuthenticatedAnunciosRoute
   '/buscar': typeof AuthenticatedBuscarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
+  '/comprador': typeof AuthenticatedCompradorRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/anuncios': typeof AuthenticatedAnunciosRoute
   '/buscar': typeof AuthenticatedBuscarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
+  '/comprador': typeof AuthenticatedCompradorRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_authenticated/anuncios': typeof AuthenticatedAnunciosRoute
   '/_authenticated/buscar': typeof AuthenticatedBuscarRoute
   '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
+  '/_authenticated/comprador': typeof AuthenticatedCompradorRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/_authenticated/pedidos': typeof AuthenticatedPedidosRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/anuncios'
     | '/buscar'
     | '/calendario'
+    | '/comprador'
     | '/favoritos'
     | '/painel'
     | '/pedidos'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/anuncios'
     | '/buscar'
     | '/calendario'
+    | '/comprador'
     | '/favoritos'
     | '/painel'
     | '/pedidos'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_authenticated/anuncios'
     | '/_authenticated/buscar'
     | '/_authenticated/calendario'
+    | '/_authenticated/comprador'
     | '/_authenticated/favoritos'
     | '/_authenticated/painel'
     | '/_authenticated/pedidos'
@@ -204,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalendarioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/comprador': {
+      id: '/_authenticated/comprador'
+      path: '/comprador'
+      fullPath: '/comprador'
+      preLoaderRoute: typeof AuthenticatedCompradorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/favoritos': {
       id: '/_authenticated/favoritos'
       path: '/favoritos'
@@ -246,6 +265,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnunciosRoute: typeof AuthenticatedAnunciosRoute
   AuthenticatedBuscarRoute: typeof AuthenticatedBuscarRoute
   AuthenticatedCalendarioRoute: typeof AuthenticatedCalendarioRoute
+  AuthenticatedCompradorRoute: typeof AuthenticatedCompradorRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedPedidosRoute: typeof AuthenticatedPedidosRoute
@@ -257,6 +277,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnunciosRoute: AuthenticatedAnunciosRoute,
   AuthenticatedBuscarRoute: AuthenticatedBuscarRoute,
   AuthenticatedCalendarioRoute: AuthenticatedCalendarioRoute,
+  AuthenticatedCompradorRoute: AuthenticatedCompradorRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedPedidosRoute: AuthenticatedPedidosRoute,
