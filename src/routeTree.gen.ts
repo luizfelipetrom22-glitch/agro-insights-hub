@@ -18,6 +18,7 @@ import { Route as AuthenticatedBuscarRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authenticated/calendario'
 import { Route as AuthenticatedCompradorRouteImport } from './routes/_authenticated/comprador'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
+import { Route as AuthenticatedMensagensRouteImport } from './routes/_authenticated/mensagens'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedPedidosRouteImport } from './routes/_authenticated/pedidos'
 import { Route as AuthenticatedRelatoriosRouteImport } from './routes/_authenticated/relatorios'
@@ -68,6 +69,11 @@ const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMensagensRoute = AuthenticatedMensagensRouteImport.update({
+  id: '/mensagens',
+  path: '/mensagens',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   id: '/painel',
   path: '/painel',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/comprador': typeof AuthenticatedCompradorRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
+  '/mensagens': typeof AuthenticatedMensagensRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/relatorios': typeof AuthenticatedRelatoriosRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/comprador': typeof AuthenticatedCompradorRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
+  '/mensagens': typeof AuthenticatedMensagensRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/relatorios': typeof AuthenticatedRelatoriosRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
   '/_authenticated/comprador': typeof AuthenticatedCompradorRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
+  '/_authenticated/mensagens': typeof AuthenticatedMensagensRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/_authenticated/pedidos': typeof AuthenticatedPedidosRoute
   '/_authenticated/relatorios': typeof AuthenticatedRelatoriosRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/comprador'
     | '/favoritos'
+    | '/mensagens'
     | '/painel'
     | '/pedidos'
     | '/relatorios'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/comprador'
     | '/favoritos'
+    | '/mensagens'
     | '/painel'
     | '/pedidos'
     | '/relatorios'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/_authenticated/calendario'
     | '/_authenticated/comprador'
     | '/_authenticated/favoritos'
+    | '/_authenticated/mensagens'
     | '/_authenticated/painel'
     | '/_authenticated/pedidos'
     | '/_authenticated/relatorios'
@@ -262,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/mensagens': {
+      id: '/_authenticated/mensagens'
+      path: '/mensagens'
+      fullPath: '/mensagens'
+      preLoaderRoute: typeof AuthenticatedMensagensRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/painel': {
       id: '/_authenticated/painel'
       path: '/painel'
@@ -307,6 +326,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCalendarioRoute: typeof AuthenticatedCalendarioRoute
   AuthenticatedCompradorRoute: typeof AuthenticatedCompradorRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
+  AuthenticatedMensagensRoute: typeof AuthenticatedMensagensRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedPedidosRoute: typeof AuthenticatedPedidosRoute
   AuthenticatedRelatoriosRoute: typeof AuthenticatedRelatoriosRoute
@@ -320,6 +340,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCalendarioRoute: AuthenticatedCalendarioRoute,
   AuthenticatedCompradorRoute: AuthenticatedCompradorRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
+  AuthenticatedMensagensRoute: AuthenticatedMensagensRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedPedidosRoute: AuthenticatedPedidosRoute,
   AuthenticatedRelatoriosRoute: AuthenticatedRelatoriosRoute,
@@ -338,13 +359,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
