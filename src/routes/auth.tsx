@@ -2,6 +2,14 @@ import { createFileRoute, redirect, useNavigate, Link } from "@tanstack/react-ro
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { fetchSessionProfile, type UserType } from "@/hooks/use-profile";
+
+async function destinationForSession(): Promise<string> {
+  const session = await fetchSessionProfile();
+  if (!session) return "/painel";
+  if (!session.hasChosenType) return "/bem-vindo";
+  return session.userType === "comprador" ? "/comprador" : "/painel";
+}
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -24,13 +32,14 @@ export const Route = createFileRoute("/auth")({
     const { data } = await supabase.auth.getSession();
     if (data.session) {
       const next = (search as { redirect?: string })["redirect"];
-      throw redirect({ to: next ? next : "/painel" } as never);
+      throw redirect({ to: next ? next : await destinationForSession() } as never);
     }
   },
   component: AuthPage,
-  validateSearch: (search: Record<string, unknown>) => ({
-    redirect: (search["redirect"] as string) || undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
+    const next = search["redirect"];
+    return typeof next === "string" && next ? { redirect: next } : {};
+  },
 });
 
 function AuthPage() {
@@ -40,10 +49,11 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [userType, setUserType] = useState<UserType>("produtor");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const redirectTo = search["redirect"] || "/painel";
+  const redirectTo = search["redirect"];
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -54,7 +64,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: name } },
+          options: { data: { full_name: name, user_type: userType } },
         });
         if (error) throw error;
         setError(
@@ -67,7 +77,7 @@ function AuthPage() {
           password,
         });
         if (error) throw error;
-        navigate({ to: redirectTo as never });
+        navigate({ to: (redirectTo ?? (await destinationForSession())) as never });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro inesperado.");
@@ -86,7 +96,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return; // browser redirects to Google
-    navigate({ to: redirectTo as never });
+    navigate({ to: (redirectTo ?? (await destinationForSession())) as never });
   }
 
   return (
@@ -149,6 +159,36 @@ function AuthPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {mode === "signup" && (
+              <div>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-soil-brown/50">
+                  Como você deseja utilizar a plataforma?
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {(
+                    [
+                      { value: "produtor", icon: "🌾", label: "Sou Produtor" },
+                      { value: "comprador", icon: "🛒", label: "Sou Comprador" },
+                    ] as { value: UserType; icon: string; label: string }[]
+                  ).map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setUserType(option.value)}
+                      aria-pressed={userType === option.value}
+                      className={`rounded-lg border px-3 py-3 text-left text-sm transition-colors ${
+                        userType === option.value
+                          ? "border-harvest-green bg-harvest-green/5 font-semibold"
+                          : "border-soil-brown/15 hover:bg-soil-brown/5"
+                      }`}
+                    >
+                      <span className="block text-lg">{option.icon}</span>
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {mode === "signup" && (
               <div>
                 <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-soil-brown/50">

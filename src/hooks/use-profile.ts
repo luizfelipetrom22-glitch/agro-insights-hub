@@ -8,6 +8,7 @@ export type SessionProfile = {
   userId: string;
   email: string | null;
   userType: UserType;
+  hasChosenType: boolean;
   profile: Tables<"profiles"> | null;
   buyerProfile: Tables<"buyer_profiles"> | null;
 };
@@ -34,6 +35,7 @@ export async function fetchSessionProfile(): Promise<SessionProfile | null> {
     userId: user.id,
     email: user.email ?? null,
     userType,
+    hasChosenType: metaType === "comprador" || metaType === "produtor" || Boolean(buyerProfile),
     profile: profile ?? null,
     buyerProfile: buyerProfile ?? null,
   };

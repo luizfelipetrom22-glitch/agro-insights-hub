@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchSessionProfile } from "@/hooks/use-profile";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
@@ -16,6 +17,12 @@ export const Route = createFileRoute("/_authenticated")({
           to: "/auth",
           search: { redirect: location.href },
         });
+      }
+      if (!location.pathname.startsWith("/bem-vindo")) {
+        const session = await fetchSessionProfile();
+        if (session && !session.hasChosenType) {
+          throw redirect({ to: "/bem-vindo" });
+        }
       }
     } catch (err) {
       // Re-throw TanStack redirects.
@@ -33,10 +40,10 @@ function AuthenticatedLayout() {
   useEffect(() => {
     // Client-side safety net: redirect if the session is lost while mounted.
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) navigate({ to: "/auth" });
+      if (!session) navigate({ to: "/auth", search: {} });
     });
     supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) navigate({ to: "/auth" });
+      if (!data.session) navigate({ to: "/auth", search: {} });
     });
     return () => data.subscription.unsubscribe();
   }, [navigate]);
