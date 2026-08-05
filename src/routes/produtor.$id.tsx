@@ -1,10 +1,10 @@
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { toast } from "sonner";
 import { ListingCard, type Listing } from "@/components/agro/marketplace/ListingCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
+import { getOrCreateConversation } from "@/lib/chat";
 import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/produtor/$id")({
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/produtor/$id")({
 function ProducerPage() {
   const { id } = useParams({ from: "/produtor/$id" });
   const { data: session } = useProfile();
-  const [revealed, setRevealed] = useState(false);
+  const navigate = useNavigate();
 
   const producer = useQuery({
     queryKey: ["producer", id],
@@ -61,17 +61,21 @@ function ProducerPage() {
   const contact = useMutation({
     mutationFn: async () => {
       if (!session?.userId) throw new Error("Entre na sua conta para ver o contato.");
-      const { error } = await supabase
+      if (session.userId === id) throw new Error("Esta é a sua própria página de produtor.");
+      await supabase
         .from("contact_events")
         .insert({ buyer_id: session.userId, producer_id: id });
-      if (error) throw error;
+      const conversation = await getOrCreateConversation({
+        buyerId: session.userId,
+        producerId: id,
+      });
+      return conversation.id;
     },
-    onSuccess: () => {
-      setRevealed(true);
-      toast.success("Contato liberado e registrado no seu histórico.");
+    onSuccess: (conversationId) => {
+      void navigate({ to: "/mensagens", search: { conversa: conversationId } });
     },
     onError: (e: unknown) =>
-      toast.error(e instanceof Error ? e.message : "Não foi possível liberar o contato."),
+      toast.error(e instanceof Error ? e.message : "Não foi possível abrir a conversa."),
   });
 
   const p = producer.data;
@@ -89,17 +93,11 @@ function ProducerPage() {
           </p>
           <button
             onClick={() => contact.mutate()}
-            disabled={contact.isPending || revealed}
+            disabled={contact.isPending}
             className="mt-4 rounded-lg bg-harvest-green px-5 py-3 text-sm font-semibold text-harvest-green-foreground transition-colors hover:bg-harvest-green/90 disabled:opacity-60"
           >
-            {revealed ? "Contato liberado" : "Falar com o vendedor"}
+            {contact.isPending ? "Abrindo conversa…" : "Falar com o vendedor"}
           </button>
-          {revealed && (
-            <p className="mt-2 text-sm text-soil-brown/70">
-              O produtor foi notificado do seu interesse. O chat com envio de imagens e documentos
-              chega na próxima fase.
-            </p>
-          )}
         </header>
 
         <section className="space-y-4">

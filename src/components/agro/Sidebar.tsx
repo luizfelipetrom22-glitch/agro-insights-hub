@@ -7,6 +7,7 @@ const producerNav: NavItem[] = [
   { label: "Painel Geral", to: "/painel" },
   { label: "Meus Anúncios", to: "/anuncios" },
   { label: "Pedidos de Compra", to: "/pedidos" },
+  { label: "Mensagens", to: "/mensagens" },
   { label: "Calendário Agrícola", to: "/calendario" },
   { label: "Relatórios IA", to: "/relatorios" },
   { label: "Simulador de Lucro", to: "/simulador", premium: true },
@@ -17,6 +18,7 @@ const buyerNav: NavItem[] = [
   { label: "Buscar Produtos", to: "/buscar" },
   { label: "Favoritos", to: "/favoritos" },
   { label: "Meus Pedidos", to: "/pedidos" },
+  { label: "Mensagens", to: "/mensagens" },
   { label: "Relatórios IA", to: "/relatorios" },
   { label: "Alertas de Preço", to: "/simulador", premium: true },
 ];
