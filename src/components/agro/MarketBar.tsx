@@ -1,3 +1,5 @@
+import { NotificationBell } from "./NotificationBell";
+
 const tickers = [
   { label: "Soja (CBOT)", value: "US$ 11,84", change: "+0.4%", dir: "up" as const },
   { label: "Milho", value: "R$ 62,50", change: "-1.2%", dir: "down" as const },
@@ -45,7 +47,8 @@ export function MarketBar({ onHelp }: { onHelp?: () => void }) {
         ))}
       </div>
       <div className="hidden shrink-0 items-center gap-4 pl-6 md:flex">
-        <span className="whitespace-nowrap opacity-60">12 Mar, 2024</span>
+        <NotificationBell />
+        <div className="h-4 w-px bg-harvest-green-foreground/20" />
         <div className="h-4 w-px bg-harvest-green-foreground/20" />
         <button
           onClick={onHelp}
