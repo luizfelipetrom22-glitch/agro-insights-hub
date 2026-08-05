@@ -49,7 +49,6 @@ export function MarketBar({ onHelp }: { onHelp?: () => void }) {
       <div className="hidden shrink-0 items-center gap-4 pl-6 md:flex">
         <NotificationBell />
         <div className="h-4 w-px bg-harvest-green-foreground/20" />
-        <div className="h-4 w-px bg-harvest-green-foreground/20" />
         <button
           onClick={onHelp}
           className="transition-colors hover:text-clay"
