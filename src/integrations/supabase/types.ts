@@ -358,36 +358,45 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          bio: string | null
           city: string | null
           created_at: string
           crops: string[] | null
           farm_name: string | null
           full_name: string | null
           id: string
+          phone: string | null
           state: string | null
           updated_at: string
           user_id: string
           user_type: Database["public"]["Enums"]["user_type"]
         }
         Insert: {
+          avatar_url?: string | null
+          bio?: string | null
           city?: string | null
           created_at?: string
           crops?: string[] | null
           farm_name?: string | null
           full_name?: string | null
           id?: string
+          phone?: string | null
           state?: string | null
           updated_at?: string
           user_id: string
           user_type?: Database["public"]["Enums"]["user_type"]
         }
         Update: {
+          avatar_url?: string | null
+          bio?: string | null
           city?: string | null
           created_at?: string
           crops?: string[] | null
           farm_name?: string | null
           full_name?: string | null
           id?: string
+          phone?: string | null
           state?: string | null
           updated_at?: string
           user_id?: string
