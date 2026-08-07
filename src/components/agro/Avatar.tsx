@@ -16,7 +16,7 @@ export function Avatar({
   className = "",
 }: {
   path?: string | null;
-  name?: string | null;
+  name?: string | null | undefined;
   size?: number;
   className?: string;
 }) {
