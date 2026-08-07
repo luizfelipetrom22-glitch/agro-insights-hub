@@ -11,6 +11,7 @@ const producerNav: NavItem[] = [
   { label: "Calendário Agrícola", to: "/calendario" },
   { label: "Relatórios IA", to: "/relatorios" },
   { label: "Simulador de Lucro", to: "/simulador", premium: true },
+  { label: "Meu Perfil", to: "/perfil" },
 ];
 
 const buyerNav: NavItem[] = [
@@ -21,6 +22,7 @@ const buyerNav: NavItem[] = [
   { label: "Mensagens", to: "/mensagens" },
   { label: "Relatórios IA", to: "/relatorios" },
   { label: "Alertas de Preço", to: "/simulador", premium: true },
+  { label: "Meu Perfil", to: "/perfil" },
 ];
 
 const events = [
