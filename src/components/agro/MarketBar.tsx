@@ -1,4 +1,6 @@
 import { NotificationBell } from "./NotificationBell";
+import { Avatar } from "./Avatar";
+import { useProfile } from "@/hooks/use-profile";
 
 const tickers = [
   { label: "Soja (CBOT)", value: "US$ 11,84", change: "+0.4%", dir: "up" as const },
@@ -10,6 +12,10 @@ const tickers = [
 ];
 
 export function MarketBar({ onHelp }: { onHelp?: () => void }) {
+  const { data: session } = useProfile();
+  const avatarPath = session?.profile?.avatar_url ?? session?.buyerProfile?.avatar_url ?? null;
+  const displayName =
+    session?.profile?.full_name ?? session?.buyerProfile?.full_name ?? session?.email ?? null;
   return (
     <div
       data-tour="market-bar"
@@ -55,6 +61,11 @@ export function MarketBar({ onHelp }: { onHelp?: () => void }) {
         >
           Ajuda
         </button>
+        {session && (
+          <a href="/perfil" aria-label="Meu perfil" className="flex items-center">
+            <Avatar path={avatarPath} name={displayName} size={26} />
+          </a>
+        )}
       </div>
     </div>
   );
