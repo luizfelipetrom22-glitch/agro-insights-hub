@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/agro/AppShell";
+import { PhotoUploader } from "@/components/agro/PhotoUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
@@ -48,6 +49,7 @@ const emptyForm = {
   certifications: [] as string[],
   organic: false,
   family_farming: false,
+  photos: [] as string[],
 };
 
 function AnunciosPage() {
@@ -86,6 +88,7 @@ function AnunciosPage() {
         certifications: form.certifications,
         organic: form.organic,
         family_farming: form.family_farming,
+        photos: form.photos,
       };
       if (editingId) {
         const { error } = await supabase.from("listings").update(payload).eq("id", editingId);
@@ -119,8 +122,12 @@ function AnunciosPage() {
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
+      const listing = listings.data?.find((l) => l.id === id);
       const { error } = await supabase.from("listings").delete().eq("id", id);
       if (error) throw error;
+      if (listing?.photos?.length) {
+        await supabase.storage.from("listing-photos").remove(listing.photos);
+      }
     },
     onSuccess: () => {
       toast.success("Anúncio excluído.");
@@ -143,6 +150,7 @@ function AnunciosPage() {
       certifications: l.certifications,
       organic: l.organic,
       family_farming: l.family_farming,
+      photos: l.photos ?? [],
     });
   }
 
@@ -280,6 +288,17 @@ function AnunciosPage() {
               />
             </Field>
           </div>
+          {session?.userId && (
+            <div className="sm:col-span-2">
+              <Field label="Fotos do anúncio">
+                <PhotoUploader
+                  userId={session.userId}
+                  value={form.photos}
+                  onChange={(photos) => setForm({ ...form, photos })}
+                />
+              </Field>
+            </div>
+          )}
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"

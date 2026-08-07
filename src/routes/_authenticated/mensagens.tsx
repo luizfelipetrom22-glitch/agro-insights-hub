@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppShell } from "@/components/agro/AppShell";
+import { Avatar } from "@/components/agro/Avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import {
@@ -71,13 +72,28 @@ function MessagesPage() {
     queryKey: ["conversation-names", counterpartIds.slice().sort().join("|")],
     enabled: counterpartIds.length > 0,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, farm_name, city, state")
-        .in("user_id", counterpartIds);
-      const map: Record<string, string> = {};
-      for (const p of data ?? []) {
-        map[p.user_id] = p.farm_name || p.full_name || "Participante";
+      const [{ data: profiles }, { data: buyers }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("user_id, full_name, farm_name, avatar_url")
+          .in("user_id", counterpartIds),
+        supabase
+          .from("buyer_profiles")
+          .select("user_id, full_name, company, avatar_url")
+          .in("user_id", counterpartIds),
+      ]);
+      const map: Record<string, { name: string; avatar: string | null }> = {};
+      for (const p of profiles ?? []) {
+        map[p.user_id] = {
+          name: p.farm_name || p.full_name || "Participante",
+          avatar: p.avatar_url,
+        };
+      }
+      for (const b of buyers ?? []) {
+        map[b.user_id] = {
+          name: b.company || b.full_name || map[b.user_id]?.name || "Participante",
+          avatar: b.avatar_url ?? map[b.user_id]?.avatar ?? null,
+        };
       }
       return map;
     },
@@ -115,21 +131,25 @@ function MessagesPage() {
           )}
           {list.map((c) => {
             const other = c.buyer_id === userId ? c.producer_id : c.buyer_id;
+            const info = names.data?.[other];
             return (
               <button
                 key={c.id}
                 type="button"
                 onClick={() => void navigate({ to: "/mensagens", search: { conversa: c.id } })}
-                className={`block w-full rounded-xl px-3 py-2.5 text-left transition-colors ${
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
                   c.id === activeId ? "bg-harvest-green/10" : "hover:bg-soil-brown/5"
                 }`}
               >
-                <p className="text-sm font-semibold">
-                  {names.data?.[other] ?? "Participante"}
-                </p>
-                <p className="line-clamp-1 text-xs text-soil-brown/55">
-                  {c.last_message ?? "Conversa iniciada"}
-                </p>
+                <Avatar path={info?.avatar ?? null} name={info?.name} size={36} />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">
+                    {info?.name ?? "Participante"}
+                  </span>
+                  <span className="line-clamp-1 block text-xs text-soil-brown/55">
+                    {c.last_message ?? "Conversa iniciada"}
+                  </span>
+                </span>
               </button>
             );
           })}
@@ -140,8 +160,12 @@ function MessagesPage() {
             conversation={active}
             userId={userId!}
             title={
-              names.data?.[active.buyer_id === userId ? active.producer_id : active.buyer_id] ??
-              "Participante"
+              names.data?.[active.buyer_id === userId ? active.producer_id : active.buyer_id]
+                ?.name ?? "Participante"
+            }
+            avatarPath={
+              names.data?.[active.buyer_id === userId ? active.producer_id : active.buyer_id]
+                ?.avatar ?? null
             }
           />
         ) : (
@@ -158,10 +182,12 @@ function Thread({
   conversation,
   userId,
   title,
+  avatarPath,
 }: {
   conversation: Conversation;
   userId: string;
   title: string;
+  avatarPath: string | null;
 }) {
   const queryClient = useQueryClient();
   const [text, setText] = useState("");
@@ -230,7 +256,8 @@ function Thread({
 
   return (
     <section className="flex h-[600px] flex-col rounded-2xl border border-soil-brown/10 bg-card">
-      <header className="border-b border-soil-brown/10 px-5 py-3">
+      <header className="flex items-center gap-3 border-b border-soil-brown/10 px-5 py-3">
+        <Avatar path={avatarPath} name={title} size={36} />
         <p className="font-serif text-lg">{title}</p>
       </header>
 

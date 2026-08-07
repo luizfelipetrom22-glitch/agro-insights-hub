@@ -2,9 +2,11 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ListingCard, type Listing } from "@/components/agro/marketplace/ListingCard";
+import { Avatar } from "@/components/agro/Avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import { getOrCreateConversation } from "@/lib/chat";
+import { useSignedUrls } from "@/lib/storage";
 import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/produtor/$id")({
@@ -79,18 +81,26 @@ function ProducerPage() {
   });
 
   const p = producer.data;
+  const covers = useSignedUrls(
+    "listing-photos",
+    (listings.data ?? []).map((l) => l.photos?.[0]),
+  );
 
   return (
     <main className="min-h-screen bg-background px-6 py-12 font-sans text-soil-brown">
       <div className="mx-auto max-w-4xl space-y-8">
         <header>
-          <h1 className="font-serif text-4xl text-harvest-green">
-            {p?.farm_name ?? p?.full_name ?? "Produtor"}
-          </h1>
+          <div className="flex items-center gap-4">
+            <Avatar path={p?.avatar_url ?? null} name={p?.full_name ?? p?.farm_name} size={72} />
+            <h1 className="font-serif text-4xl text-harvest-green">
+              {p?.farm_name ?? p?.full_name ?? "Produtor"}
+            </h1>
+          </div>
           <p className="mt-1 text-sm text-soil-brown/60">
             {[p?.city, p?.state].filter(Boolean).join("/") || "Local não informado"}
             {p?.crops?.length ? ` · ${p.crops.join(", ")}` : ""}
           </p>
+          {p?.bio && <p className="mt-3 max-w-2xl text-sm text-soil-brown/70">{p.bio}</p>}
           <button
             onClick={() => contact.mutate()}
             disabled={contact.isPending}
@@ -111,7 +121,11 @@ function ProducerPage() {
           )}
           <div className="grid gap-4 md:grid-cols-2">
             {listings.data?.map((l) => (
-              <ListingCard key={l.id} listing={l} />
+              <ListingCard
+                key={l.id}
+                listing={l}
+                photoUrl={l.photos?.[0] ? covers.data?.[l.photos[0]] : undefined}
+              />
             ))}
           </div>
         </section>

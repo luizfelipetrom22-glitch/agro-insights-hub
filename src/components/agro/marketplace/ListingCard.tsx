@@ -2,23 +2,59 @@ import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Tables } from "@/integrations/supabase/types";
 import { formatBRL, formatQuantity } from "@/lib/marketplace";
+import { useSignedUrls } from "@/lib/storage";
 
 export type Listing = Tables<"listings">;
+
+const PRODUCT_ICON: Record<string, string> = {
+  Soja: "🌱",
+  Milho: "🌽",
+  Café: "☕",
+  "Boi Gordo": "🐂",
+  Trigo: "🌾",
+  Algodão: "🧵",
+  Feijão: "🫘",
+  Arroz: "🍚",
+  Leite: "🥛",
+  Laranja: "🍊",
+  Hortaliças: "🥬",
+};
 
 export function ListingCard({
   listing,
   favorited,
   onToggleFavorite,
   footer,
+  photoUrl,
 }: {
   listing: Listing;
   favorited?: boolean;
   onToggleFavorite?: (listing: Listing) => void;
   footer?: ReactNode;
+  /** URL assinada da capa, quando resolvida em lote pela página. */
+  photoUrl?: string | undefined;
 }) {
+  const cover = listing.photos?.[0];
+  const fallback = useSignedUrls("listing-photos", photoUrl ? [] : [cover]);
+  const resolved = photoUrl ?? (cover ? fallback.data?.[cover] : undefined);
+
   return (
     <article className="flex flex-col justify-between rounded-2xl border border-soil-brown/10 bg-card p-5">
       <div>
+        <div className="mb-4 flex h-40 items-center justify-center overflow-hidden rounded-xl bg-soil-brown/5">
+          {resolved ? (
+            <img
+              src={resolved}
+              alt={`Foto do anúncio de ${listing.product}`}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <span className="text-4xl opacity-40" aria-hidden>
+              {PRODUCT_ICON[listing.product] ?? "🌾"}
+            </span>
+          )}
+        </div>
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="font-serif text-xl leading-tight">{listing.product}</h3>
