@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import { useFavorites, useToggleFavorite } from "@/hooks/use-favorites";
 import { CERTIFICATIONS, STATES, proximityLabel, proximityScore } from "@/lib/marketplace";
+import { useSignedUrls } from "@/lib/storage";
 
 export const Route = createFileRoute("/_authenticated/buscar")({
   head: () => ({
@@ -158,6 +159,7 @@ function BuscarPage() {
           <ListingCard
             key={l.id}
             listing={l}
+            photoUrl={l.photos?.[0] ? covers.data?.[l.photos[0]] : undefined}
             favorited={favoriteByListing.has(l.id)}
             onToggleFavorite={() => {
               const existingId = favoriteByListing.get(l.id);
