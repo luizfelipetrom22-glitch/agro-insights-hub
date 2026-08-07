@@ -94,6 +94,11 @@ function BuscarPage() {
     (favorites.data ?? []).filter((f) => f.listing_id).map((f) => [f.listing_id!, f.id]),
   );
 
+  const covers = useSignedUrls(
+    "listing-photos",
+    results.map((l) => l.photos?.[0]),
+  );
+
   return (
     <AppShell>
       <header>
