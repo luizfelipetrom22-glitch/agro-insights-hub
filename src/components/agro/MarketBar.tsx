@@ -54,7 +54,7 @@ export function MarketBar({ onHelp }: { onHelp?: () => void }) {
           </span>
         )}
         {items.map((t) => (
-          <div key={t.label} className="flex items-center gap-2 whitespace-nowrap" title={t.hint}>
+          <div key={`${t.label}-${t.value}`} className="flex items-center gap-2 whitespace-nowrap" title={t.hint}>
             <span className="uppercase tracking-wider opacity-60">{t.label}</span>
             <span
               className={
