@@ -54,9 +54,9 @@ export function InsightAndNews() {
               Nenhuma notícia disponível no momento.
             </p>
           )}
-          {(news.data ?? []).map((n) => (
+          {(news.data ?? []).map((n, i) => (
             <a
-              key={n.link}
+              key={`${n.link}-${i}`}
               href={n.link}
               target="_blank"
               rel="noopener noreferrer"

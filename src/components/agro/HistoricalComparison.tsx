@@ -60,9 +60,9 @@ export function HistoricalComparison() {
           </div>
 
           <div className="mt-8 flex h-32 items-end gap-1">
-            {months.map((m) => (
+            {months.map((m, i) => (
               <div
-                key={m.month}
+                key={`${m.month}-${i}`}
                 title={`${m.month}: ${formatBRL(m.price)}`}
                 className="flex-1 rounded-t bg-harvest-green/70"
                 style={{ height: `${max ? Math.max(4, (m.price / max) * 100) : 0}%` }}
