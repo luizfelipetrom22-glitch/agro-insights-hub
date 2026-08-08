@@ -3,8 +3,12 @@ import {
   getAgroNews,
   getMarketInsight,
   getMarketTickers,
+  getPriceHistory,
   getWeather,
 } from "@/lib/market.functions";
+
+export const HISTORY_PRODUCTS = ["Soja", "Milho", "Café", "Boi Gordo"] as const;
+export type HistoryProductName = (typeof HISTORY_PRODUCTS)[number];
 
 /** Cotações reais, revalidadas a cada 5 minutos. */
 export function useTickers() {
@@ -41,5 +45,13 @@ export function useMarketInsight() {
     queryFn: () => getMarketInsight(),
     staleTime: 30 * 60 * 1000,
     refetchInterval: 30 * 60 * 1000,
+  });
+}
+
+export function usePriceHistory(product: HistoryProductName) {
+  return useQuery({
+    queryKey: ["price-history", product],
+    queryFn: () => getPriceHistory({ data: { product } }),
+    staleTime: 60 * 60 * 1000,
   });
 }
