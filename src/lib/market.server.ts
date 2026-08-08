@@ -223,6 +223,80 @@ export async function fetchNews(query = "agronegócio", limit = 6): Promise<News
   }
 }
 
+export const HISTORY_PRODUCTS = {
+  Soja: { symbol: "ZS=F", unit: "R$/saca 60 kg", kind: "bushel", factor: 27.2155 },
+  Milho: { symbol: "ZC=F", unit: "R$/saca 60 kg", kind: "bushel", factor: 25.4012 },
+  Café: { symbol: "KC=F", unit: "R$/saca 60 kg", kind: "pound", factor: 132.277 },
+  "Boi Gordo": { symbol: "LE=F", unit: "R$/arroba", kind: "pound", factor: 33.069 },
+} as const;
+
+export type HistoryProduct = keyof typeof HISTORY_PRODUCTS;
+
+export type PriceHistory = {
+  product: string;
+  unit: string;
+  months: { month: string; price: number }[];
+  lastYearAvg: number | null;
+  previousYearAvg: number | null;
+  changePct: number | null;
+};
+
+/** Série mensal real dos últimos 24 meses, convertida para reais. */
+export async function fetchHistory(product: HistoryProduct): Promise<PriceHistory | null> {
+  const config = HISTORY_PRODUCTS[product];
+  try {
+    const [res, usd] = await Promise.all([
+      fetch(`${YAHOO}/${encodeURIComponent(config.symbol)}?interval=1mo&range=2y`, { headers: UA }),
+      yahooQuote("BRL=X"),
+    ]);
+    if (!res.ok || !usd) return null;
+    const json = (await res.json()) as {
+      chart?: {
+        result?: {
+          timestamp?: number[];
+          indicators?: { quote?: { close?: (number | null)[] }[] };
+        }[];
+      };
+    };
+    const result = json.chart?.result?.[0];
+    const stamps = result?.timestamp ?? [];
+    const closes = result?.indicators?.quote?.[0]?.close ?? [];
+    const months: { month: string; price: number }[] = [];
+    for (let i = 0; i < stamps.length; i += 1) {
+      const close = closes[i];
+      const stamp = stamps[i];
+      if (close === null || close === undefined || stamp === undefined) continue;
+      const brlValue =
+        config.kind === "bushel"
+          ? (close / 100 / config.factor) * 60 * usd.price
+          : (close / 100) * config.factor * usd.price;
+      months.push({
+        month: new Date(stamp * 1000).toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }),
+        price: Math.round(brlValue * 100) / 100,
+      });
+    }
+    const avg = (list: { price: number }[]) =>
+      list.length ? list.reduce((sum, m) => sum + m.price, 0) / list.length : null;
+    const lastYear = months.slice(-12);
+    const previousYear = months.slice(-24, -12);
+    const lastYearAvg = avg(lastYear);
+    const previousYearAvg = avg(previousYear);
+    return {
+      product,
+      unit: config.unit,
+      months,
+      lastYearAvg,
+      previousYearAvg,
+      changePct:
+        lastYearAvg !== null && previousYearAvg
+          ? ((lastYearAvg - previousYearAvg) / previousYearAvg) * 100
+          : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Análise curta escrita por IA a partir das cotações reais do momento. */
 export async function generateInsight(tickers: Ticker[]): Promise<string | null> {
   const key = process.env["LOVABLE_API_KEY"];

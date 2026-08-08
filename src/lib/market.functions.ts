@@ -1,5 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { fetchNews, fetchTickers, fetchWeather, generateInsight } from "./market.server";
+import type { HistoryProduct } from "./market.server";
+import {
+  fetchHistory,
+  fetchNews,
+  fetchTickers,
+  fetchWeather,
+  generateInsight,
+} from "./market.server";
 
 export const getMarketTickers = createServerFn({ method: "GET" }).handler(async () => fetchTickers());
 
@@ -16,3 +23,7 @@ export const getMarketInsight = createServerFn({ method: "GET" }).handler(async 
   const text = await generateInsight(tickers);
   return { text, updatedAt };
 });
+
+export const getPriceHistory = createServerFn({ method: "GET" })
+  .inputValidator((input: { product: HistoryProduct }) => input)
+  .handler(async ({ data }) => fetchHistory(data.product));
