@@ -1,29 +1,60 @@
 import { NotificationBell } from "./NotificationBell";
 import { Avatar } from "./Avatar";
 import { useProfile } from "@/hooks/use-profile";
+import { useTickers, useWeather } from "@/hooks/use-market";
 
-const tickers = [
-  { label: "Soja (CBOT)", value: "US$ 11,84", change: "+0.4%", dir: "up" as const },
-  { label: "Milho", value: "R$ 62,50", change: "-1.2%", dir: "down" as const },
-  { label: "Boi Gordo", value: "R$ 238,40", change: "+1.2%", dir: "up" as const },
-  { label: "Café Arábica", value: "R$ 1.120,00", change: "0.0%", dir: "flat" as const },
-  { label: "Dólar", value: "R$ 4,96", change: null, dir: "flat" as const },
-  { label: "Clima (MT)", value: "28°C Sol", change: null, dir: "flat" as const },
-];
+type Item = {
+  label: string;
+  value: string;
+  change: string | null;
+  dir: "up" | "down" | "flat";
+  hint?: string | undefined;
+};
 
 export function MarketBar({ onHelp }: { onHelp?: () => void }) {
   const { data: session } = useProfile();
+  const market = useTickers();
+  const weather = useWeather(
+    session?.profile?.city ?? session?.buyerProfile?.city ?? null,
+    session?.profile?.state ?? session?.buyerProfile?.state ?? null,
+  );
   const avatarPath = session?.profile?.avatar_url ?? session?.buyerProfile?.avatar_url ?? null;
   const displayName =
     session?.profile?.full_name ?? session?.buyerProfile?.full_name ?? session?.email ?? null;
+
+  const items: Item[] = [...(market.data?.tickers ?? [])];
+  if (weather.data) {
+    items.push({
+      label: `Clima (${weather.data.place})`,
+      value: `${weather.data.temperature}°C ${weather.data.description}`,
+      change: null,
+      dir: "flat",
+      hint:
+        weather.data.max !== null
+          ? `Mín ${Math.round(weather.data.min ?? 0)}° / Máx ${Math.round(weather.data.max)}° · Chuva ${weather.data.rain ?? 0} mm`
+          : undefined,
+    });
+  }
+  const updated = market.data?.updatedAt
+    ? new Date(market.data.updatedAt).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null;
+
   return (
     <div
       data-tour="market-bar"
       className="sticky top-0 z-50 flex items-center justify-between border-b border-harvest-green-foreground/10 bg-harvest-green px-6 py-2.5 text-xs font-medium text-harvest-green-foreground"
     >
       <div className="flex gap-8 overflow-x-auto">
-        {tickers.map((t) => (
-          <div key={t.label} className="flex items-center gap-2 whitespace-nowrap">
+        {items.length === 0 && (
+          <span className="opacity-60">
+            {market.isError ? "Cotações indisponíveis agora" : "Carregando cotações…"}
+          </span>
+        )}
+        {items.map((t) => (
+          <div key={`${t.label}-${t.value}`} className="flex items-center gap-2 whitespace-nowrap" title={t.hint}>
             <span className="uppercase tracking-wider opacity-60">{t.label}</span>
             <span
               className={
@@ -53,6 +84,7 @@ export function MarketBar({ onHelp }: { onHelp?: () => void }) {
         ))}
       </div>
       <div className="hidden shrink-0 items-center gap-4 pl-6 md:flex">
+        {updated && <span className="opacity-50">Atualizado {updated}</span>}
         <NotificationBell />
         <div className="h-4 w-px bg-harvest-green-foreground/20" />
         <button

@@ -1,29 +1,20 @@
-import soy from "@/assets/news-soy.jpg";
-import port from "@/assets/news-port.jpg";
-import machinery from "@/assets/news-machinery.jpg";
+import { useAgroNews, useMarketInsight } from "@/hooks/use-market";
 
-const news = [
-  {
-    img: soy,
-    alt: "Vagens de soja na planta",
-    title: "Mato Grosso atinge 95% da colheita de soja",
-    note: "Rendimento médio supera expectativas nas regiões norte...",
-  },
-  {
-    img: port,
-    alt: "Navio cargueiro em porto comercial",
-    title: "Logística: Fretes para Paranaguá sobem 8%",
-    note: "Demanda por transporte rodoviário pressiona custos de escoamento...",
-  },
-  {
-    img: machinery,
-    alt: "Maquinário agrícola ao pôr do sol",
-    title: "Novos subsídios para máquinas agrícolas",
-    note: "Governo anuncia linha de crédito especial para agricultura 4.0...",
-  },
-];
+function relativeTime(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const minutes = Math.round((Date.now() - date.getTime()) / 60000);
+  if (minutes < 1) return "agora";
+  if (minutes < 60) return `${minutes} min atrás`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} h atrás`;
+  return date.toLocaleDateString("pt-BR");
+}
 
 export function InsightAndNews() {
+  const insight = useMarketInsight();
+  const news = useAgroNews();
+
   return (
     <div
       data-tour="insight-news"
@@ -33,46 +24,50 @@ export function InsightAndNews() {
         <h3 className="flex items-center gap-2 font-serif text-xl">
           Análise de Mercado IA
           <span className="rounded-full border border-harvest-green/20 px-2 py-0.5 text-[10px] text-harvest-green">
-            Gerado agora
+            {insight.isFetching ? "Gerando…" : "Atualizado"}
           </span>
         </h3>
-        <div className="group cursor-pointer rounded-2xl border border-soil-brown/10 bg-card p-6 transition-colors hover:border-clay/40">
+        <div className="rounded-2xl border border-soil-brown/10 bg-card p-6">
           <div className="mb-4 flex items-start justify-between">
-            <h4 className="font-semibold transition-colors group-hover:text-clay">
-              Impacto da seca na Argentina no preço local
-            </h4>
-            <span className="text-xs text-soil-brown/40">10 min atrás</span>
+            <h4 className="font-semibold">Leitura do mercado agora</h4>
+            <span className="text-xs text-soil-brown/40">
+              {insight.data?.updatedAt ? relativeTime(insight.data.updatedAt) : ""}
+            </span>
           </div>
-          <p className="mb-4 text-sm leading-relaxed text-soil-brown/70">
-            Nossa IA detectou uma quebra de safra 12% maior que o esperado na região de Rosário.
-            Isso sugere uma pressão de alta no prêmio de exportação para abril...
+          <p className="text-sm leading-relaxed text-soil-brown/70">
+            {insight.isLoading
+              ? "Lendo as cotações do momento…"
+              : (insight.data?.text ??
+                "Não foi possível gerar a análise agora. As cotações continuam atualizando na barra do topo.")}
           </p>
-          <div className="flex items-center gap-4 text-xs font-medium text-harvest-green">
-            <span className="flex items-center gap-1.5">Alerta WhatsApp ativo</span>
-            <span className="text-soil-brown/20">|</span>
-            <span>Ver relatório completo</span>
-          </div>
         </div>
       </div>
 
       <div className="space-y-4">
         <h3 className="font-serif text-xl">Últimas do Agronegócio</h3>
         <div className="space-y-px overflow-hidden rounded-2xl border border-soil-brown/10 bg-soil-brown/5">
-          {news.map((n) => (
-            <div key={n.title} className="flex gap-4 bg-card p-4">
-              <img
-                src={n.img}
-                alt={n.alt}
-                loading="lazy"
-                width={512}
-                height={512}
-                className="size-16 shrink-0 rounded-lg object-cover"
-              />
-              <div>
-                <h5 className="mb-1 text-sm font-semibold">{n.title}</h5>
-                <p className="text-xs text-soil-brown/50">{n.note}</p>
-              </div>
-            </div>
+          {news.isLoading && (
+            <p className="bg-card p-4 text-sm text-soil-brown/50">Buscando notícias…</p>
+          )}
+          {!news.isLoading && (news.data ?? []).length === 0 && (
+            <p className="bg-card p-4 text-sm text-soil-brown/50">
+              Nenhuma notícia disponível no momento.
+            </p>
+          )}
+          {(news.data ?? []).map((n, i) => (
+            <a
+              key={`${n.link}-${i}`}
+              href={n.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-card p-4 transition-colors hover:bg-soil-brown/5"
+            >
+              <h5 className="mb-1 text-sm font-semibold">{n.title}</h5>
+              <p className="text-xs text-soil-brown/50">
+                {n.source}
+                {n.publishedAt ? ` · ${relativeTime(n.publishedAt)}` : ""}
+              </p>
+            </a>
           ))}
         </div>
       </div>
