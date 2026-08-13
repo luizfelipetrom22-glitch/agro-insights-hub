@@ -1,41 +1,37 @@
-# O que já funciona e o que falta
+# O que ainda pode melhorar
 
-O marketplace está funcionando de ponta a ponta: cadastro com escolha de perfil, painéis separados de produtor e comprador, anúncios com fotos, busca com filtros, favoritos, pedidos de compra, perfil público do produtor, chat em tempo real com anexos, notificações e edição de perfil.
+Marketplace, chat, fotos, perfis e dados de mercado já estão reais e funcionando. O que continua fixo no código ou incompleto:
 
-Continuam com dados fixos no código:
-
-- Barra do topo: soja, milho, boi, café, dólar e clima
-- Notícias e o "insight de IA" da página inicial
-- Comparação entre anos
-- Relatórios (lista fixa, sem gerar nada)
-- Simulador (calcula na tela, mas não salva nem exporta)
+- **Simulador de lucro**: calcula na tela, mas não salva nada nem usa preço/dólar reais.
+- **Relatórios**: lista fixa, nenhum relatório é gerado de verdade.
+- **Exportação PDF/Excel**: não existe.
+- **Calendário agrícola**: tabela fixa de culturas, igual para todo mundo.
+- **Alertas por WhatsApp**: prometidos no premium, não implementados.
+- **Assinatura paga**: nada bloqueia o premium hoje.
 
 ## O que proponho fazer agora
 
-### 1. Dados reais de mercado
-- Dólar em tempo real e clima real pela cidade/estado do usuário.
-- Cotações de commodities atualizadas, com data da última atualização visível.
-- Notícias do agronegócio reais, com link para a fonte.
-- Se uma fonte falhar, a barra mostra o último valor conhecido em vez de quebrar.
+### 1. Simulador que salva e usa dados reais
+- Preço da saca e dólar já preenchidos com a cotação do momento (editável).
+- Salvar cenários na conta, com nome e data; histórico, edição e exclusão.
+- Comparar dois cenários lado a lado (custo, receita, margem, ponto de equilíbrio).
 
-### 2. Relatórios com IA de verdade
-- Botão "Gerar relatório" que produz uma análise escrita por IA usando preços atuais, dólar e o perfil do usuário (produto, estado).
+### 2. Relatórios gerados por IA
+- Botão "Gerar relatório" que escreve uma análise real com IA usando: cotações atuais, dólar, estado/cultura do perfil, seus anúncios e suas simulações.
 - Relatórios salvos na conta, com histórico e leitura completa.
-- Exportar em PDF e Excel.
 
-### 3. Simulador que salva
-- Simulações gravadas na conta, com nome, data e comparação entre cenários.
-- Exportação da simulação junto com os relatórios.
+### 3. Exportação
+- Baixar relatórios e simulações em PDF e em Excel.
 
-### 4. Comparação entre anos
-- Passa a usar as simulações e os preços armazenados em vez da tabela fixa.
+### 4. Calendário por região
+- Janelas de plantio/colheita filtradas pelo estado do usuário, com destaque do mês atual e ligação com o simulador ("simular esta safra").
+
+Alertas por WhatsApp e cobrança de assinatura ficam para uma etapa seguinte — os dois dependem de serviços externos com custo (envio de mensagens e provedor de pagamento) e vale decidir depois que o premium tiver conteúdo.
 
 ## Detalhes técnicos
 
-- Busca de cotações/dólar/clima/notícias via `createServerFn` (chaves ficam no servidor), com cache curto em tabela `market_snapshots` para não estourar limites de API e servir de fallback.
-- Geração de texto pela Lovable AI (sem chave extra), em server function; resultado salvo na tabela `reports` já existente.
-- Migração: `market_snapshots` (leitura pública via política `TO anon`), colunas de conteúdo em `reports`, e uso da tabela `simulations` existente com RLS por `auth.uid()`; GRANTs para toda tabela nova.
-- Exportação PDF/Excel no cliente, com bibliotecas leves compatíveis com o runtime atual.
-- Mesma paleta e tipografia; nenhuma tela existente muda de lugar.
-
-Fontes externas de clima e notícias podem exigir chave. Se for o caso, peço a chave na hora ou uso uma fonte pública gratuita quando existir.
+- Persistência nas tabelas existentes `simulations` e `reports`, com RLS por `auth.uid()`; GRANTs conferidos e colunas de conteúdo adicionadas por migração onde faltarem.
+- Geração de texto via Lovable AI em `createServerFn` (sem chave extra), reaproveitando `fetchTickers` de `market.server.ts` como contexto.
+- Exportação no cliente com bibliotecas leves compatíveis com o runtime atual (PDF e planilha), sem dependência nativa.
+- Calendário passa a ler uma tabela de janelas por cultura/região em vez do array fixo.
+- Mesma paleta, tipografia e AppShell; nenhuma tela muda de lugar.
