@@ -217,6 +217,28 @@ function Thread({
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [conversation.id, userId, messages.data?.length]);
 
+  const other =
+    conversation.buyer_id === userId ? conversation.producer_id : conversation.buyer_id;
+  const blocks = useBlocks(userId);
+  const block = blocks.data?.find((b) => b.blocked_id === other);
+  const blocked = Boolean(block);
+  const toggleBlock = useToggleBlock(userId);
+
+  const threat = useMemo(() => {
+    const recent = (messages.data ?? []).filter((m) => m.sender_id !== userId).slice(-15);
+    const reasons = new Set<string>();
+    let level: "ok" | "atencao" | "alto" = "ok";
+    for (const m of recent) {
+      const scan = scanMessage(m.body);
+      scan.reasons.forEach((r) => reasons.add(r));
+      if (scan.level === "alto") level = "alto";
+      else if (scan.level === "atencao" && level === "ok") level = "atencao";
+    }
+    return { level, reasons: [...reasons] };
+  }, [messages.data, userId]);
+  const threatLevel = threat.level;
+  const threatReasons = threat.reasons;
+
   const send = useMutation({
     mutationFn: async (payload: {
       body?: string;
