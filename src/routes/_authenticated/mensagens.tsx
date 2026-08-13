@@ -260,10 +260,41 @@ function Thread({
 
   return (
     <section className="flex h-[600px] flex-col rounded-2xl border border-soil-brown/10 bg-card">
-      <header className="flex items-center gap-3 border-b border-soil-brown/10 px-5 py-3">
+      <header className="flex flex-wrap items-center gap-3 border-b border-soil-brown/10 px-5 py-3">
         <Avatar path={avatarPath} name={title} size={36} />
-        <p className="font-serif text-lg">{title}</p>
+        <p className="flex-1 font-serif text-lg">{title}</p>
+        <button
+          type="button"
+          onClick={() =>
+            toggleBlock.mutate({ blockedId: other, ...(block ? { existingId: block.id } : {}) })
+          }
+          className="rounded-lg border border-soil-brown/15 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-soil-brown/5"
+        >
+          {blocked ? "Desbloquear" : "Bloquear"}
+        </button>
+        <ReportButton
+          target={{ targetType: "usuario", targetId: other, reportedUserId: other }}
+        />
       </header>
+
+      <div className="space-y-2 border-b border-soil-brown/10 px-5 py-3">
+        {threatLevel !== "ok" ? (
+          <RiskAlert
+            level={threatLevel}
+            title="Possível tentativa de golpe nesta conversa"
+          >
+            Detectamos: {threatReasons.join(", ")}. Nunca pague antes de conferir a mercadoria e
+            denuncie se insistirem.
+          </RiskAlert>
+        ) : (
+          <p className="text-[11px] text-soil-brown/50">🛡️ {SAFETY_TIPS[3]}</p>
+        )}
+        {blocked && (
+          <RiskAlert level="alto" title="Conversa bloqueada">
+            Enquanto o bloqueio existir, nenhum dos dois consegue enviar mensagens.
+          </RiskAlert>
+        )}
+      </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto p-5">
         {(messages.data ?? []).map((m) => (
@@ -307,13 +338,14 @@ function Thread({
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Escreva sua mensagem"
+          placeholder={blocked ? "Desbloqueie para conversar" : "Escreva sua mensagem"}
+          disabled={blocked}
           maxLength={2000}
           className="flex-1 rounded-lg border border-soil-brown/15 bg-background px-3 py-2.5 text-sm outline-none focus:border-harvest-green"
         />
         <button
           type="submit"
-          disabled={send.isPending || !text.trim()}
+          disabled={send.isPending || !text.trim() || blocked}
           className="rounded-lg bg-harvest-green px-4 py-2.5 text-sm font-semibold text-harvest-green-foreground transition-colors hover:bg-harvest-green/90 disabled:opacity-50"
         >
           Enviar
