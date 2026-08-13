@@ -8,6 +8,10 @@ import { useProfile } from "@/hooks/use-profile";
 import { getOrCreateConversation } from "@/lib/chat";
 import { useSignedUrls } from "@/lib/storage";
 import type { Tables } from "@/integrations/supabase/types";
+import { TrustBadge, TrustDetails } from "@/components/agro/safety/TrustBadge";
+import { ReportButton } from "@/components/agro/safety/ReportButton";
+import { useBlocks, useToggleBlock, useTrust } from "@/hooks/use-safety";
+import { SAFETY_TIPS } from "@/lib/safety";
 
 export const Route = createFileRoute("/produtor/$id")({
   head: () => ({
@@ -64,6 +68,7 @@ function ProducerPage() {
     mutationFn: async () => {
       if (!session?.userId) throw new Error("Entre na sua conta para ver o contato.");
       if (session.userId === id) throw new Error("Esta é a sua própria página de produtor.");
+      if (blocked) throw new Error("Você bloqueou este usuário. Desbloqueie na Central de Segurança.");
       await supabase
         .from("contact_events")
         .insert({ buyer_id: session.userId, producer_id: id });
@@ -81,6 +86,11 @@ function ProducerPage() {
   });
 
   const p = producer.data;
+  const trust = useTrust(id);
+  const blocks = useBlocks(session?.userId);
+  const block = blocks.data?.find((b) => b.blocked_id === id);
+  const blocked = Boolean(block);
+  const toggleBlock = useToggleBlock(session?.userId);
   const covers = useSignedUrls(
     "listing-photos",
     (listings.data ?? []).map((l) => l.photos?.[0]),
@@ -100,14 +110,40 @@ function ProducerPage() {
             {[p?.city, p?.state].filter(Boolean).join("/") || "Local não informado"}
             {p?.crops?.length ? ` · ${p.crops.join(", ")}` : ""}
           </p>
+          <div className="mt-3">
+            <TrustBadge trust={trust.data} />
+            <TrustDetails trust={trust.data} />
+          </div>
           {p?.bio && <p className="mt-3 max-w-2xl text-sm text-soil-brown/70">{p.bio}</p>}
-          <button
-            onClick={() => contact.mutate()}
-            disabled={contact.isPending}
-            className="mt-4 rounded-lg bg-harvest-green px-5 py-3 text-sm font-semibold text-harvest-green-foreground transition-colors hover:bg-harvest-green/90 disabled:opacity-60"
-          >
-            {contact.isPending ? "Abrindo conversa…" : "Falar com o vendedor"}
-          </button>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => contact.mutate()}
+              disabled={contact.isPending || blocked}
+              className="rounded-lg bg-harvest-green px-5 py-3 text-sm font-semibold text-harvest-green-foreground transition-colors hover:bg-harvest-green/90 disabled:opacity-60"
+            >
+              {contact.isPending ? "Abrindo conversa…" : "Falar com o vendedor"}
+            </button>
+            {session && session.userId !== id && (
+              <>
+                <button
+                  onClick={() =>
+                    toggleBlock.mutate({ blockedId: id, ...(block ? { existingId: block.id } : {}) })
+                  }
+                  className="rounded-lg border border-soil-brown/15 px-4 py-3 text-xs font-semibold transition-colors hover:bg-soil-brown/5"
+                >
+                  {blocked ? "Desbloquear" : "Bloquear"}
+                </button>
+                <ReportButton
+                  target={{ targetType: "usuario", targetId: id, reportedUserId: id }}
+                  label="Denunciar produtor"
+                />
+              </>
+            )}
+          </div>
+          <div className="mt-5 rounded-xl border border-clay/30 bg-clay/5 px-4 py-3 text-xs text-soil-brown/70">
+            <p className="font-semibold text-clay">Negocie com segurança</p>
+            <p className="mt-1">{SAFETY_TIPS[0]} {SAFETY_TIPS[2]}</p>
+          </div>
         </header>
 
         <section className="space-y-4">

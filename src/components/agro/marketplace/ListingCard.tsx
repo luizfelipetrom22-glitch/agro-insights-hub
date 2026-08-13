@@ -3,6 +3,9 @@ import { Link } from "@tanstack/react-router";
 import type { Tables } from "@/integrations/supabase/types";
 import { formatBRL, formatQuantity } from "@/lib/marketplace";
 import { useSignedUrls } from "@/lib/storage";
+import { useTickers } from "@/hooks/use-market";
+import { priceRisk, RISK_STYLE } from "@/lib/safety";
+import { ReportButton } from "@/components/agro/safety/ReportButton";
 
 export type Listing = Tables<"listings">;
 
@@ -37,6 +40,11 @@ export function ListingCard({
   const cover = listing.photos?.[0];
   const fallback = useSignedUrls("listing-photos", photoUrl ? [] : [cover]);
   const resolved = photoUrl ?? (cover ? fallback.data?.[cover] : undefined);
+  const { data: market } = useTickers();
+  const risk = priceRisk(
+    { product: listing.product, price: listing.price, unit: listing.unit },
+    market?.tickers,
+  );
 
   return (
     <article className="flex flex-col justify-between rounded-2xl border border-soil-brown/10 bg-card p-5">
@@ -100,16 +108,27 @@ export function ListingCard({
             <Tag key={c}>{c}</Tag>
           ))}
         </div>
+
+        {risk && (
+          <p className={`mt-4 rounded-xl border px-3 py-2 text-[11px] ${RISK_STYLE[risk.level]}`}>
+            <span aria-hidden>{risk.level === "alto" ? "⛔" : "⚠️"}</span> {risk.message}
+          </p>
+        )}
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3">
-        <Link
-          to="/produtor/$id"
-          params={{ id: listing.user_id }}
-          className="text-xs font-semibold text-harvest-green underline-offset-4 hover:underline"
-        >
-          Ver produtor
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/produtor/$id"
+            params={{ id: listing.user_id }}
+            className="text-xs font-semibold text-harvest-green underline-offset-4 hover:underline"
+          >
+            Ver produtor
+          </Link>
+          <ReportButton
+            target={{ targetType: "anuncio", targetId: listing.id, reportedUserId: listing.user_id }}
+          />
+        </div>
         {footer}
       </div>
     </article>
