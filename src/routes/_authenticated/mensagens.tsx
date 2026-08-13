@@ -14,6 +14,10 @@ import {
   type Message,
 } from "@/lib/chat";
 import { createSignedUrl, randomFileName } from "@/lib/storage";
+import { ReportButton } from "@/components/agro/safety/ReportButton";
+import { RiskAlert } from "@/components/agro/safety/RiskAlert";
+import { useBlocks, useToggleBlock } from "@/hooks/use-safety";
+import { scanMessage, SAFETY_TIPS } from "@/lib/safety";
 
 type Search = { conversa?: string };
 
