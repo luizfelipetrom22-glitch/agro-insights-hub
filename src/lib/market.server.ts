@@ -44,12 +44,12 @@ async function yahooQuote(symbol: string): Promise<Quote | null> {
   }
 }
 
-function pct(current: number, previous: number): { change: string; dir: Ticker["dir"] } {
-  if (!previous) return { change: "0,0%", dir: "flat" };
+function pct(current: number, previous: number): { change: string; dir: Ticker["dir"]; delta: number } {
+  if (!previous) return { change: "0,0%", dir: "flat", delta: 0 };
   const delta = ((current - previous) / previous) * 100;
   const dir: Ticker["dir"] = delta > 0.05 ? "up" : delta < -0.05 ? "down" : "flat";
   const sign = delta > 0 ? "+" : "";
-  return { change: `${sign}${delta.toFixed(1).replace(".", ",")}%`, dir };
+  return { change: `${sign}${delta.toFixed(1).replace(".", ",")}%`, dir, delta };
 }
 
 function brl(value: number): string {
