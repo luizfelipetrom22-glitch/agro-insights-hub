@@ -81,8 +81,8 @@ export async function fetchTickers(): Promise<{ tickers: Ticker[]; usdBrl: numbe
     if (!quote) return;
     const value = convert(quote.price);
     if (value === null) return;
-    const { change, dir } = pct(quote.price, quote.previous);
-    tickers.push({ label, value: brl(value), change, dir, hint });
+    const { change, dir, delta } = pct(quote.price, quote.previous);
+    tickers.push({ label, value: brl(value), change, dir, hint, numeric: value, changePct: delta });
   }
 
   push("Soja", soy, (v) => bagFromBushel(v, 27.2155), "CBOT convertido para R$/saca 60 kg");
