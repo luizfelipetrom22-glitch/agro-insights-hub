@@ -29,11 +29,6 @@ const buyerNav: NavItem[] = [
   { label: "Meu Perfil", to: "/perfil", icon: UserRound },
 ];
 
-const events = [
-  { month: "MAR", day: "15", title: "Início Plantio Safrinha", note: "Previsão de chuva ideal" },
-  { month: "MAR", day: "22", title: "Relatório USDA", note: "Projeção global de estoques" },
-];
-
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { data: session } = useProfile();
@@ -82,25 +77,6 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="rounded-2xl border border-soil-brown/10 bg-card p-6">
-        <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-soil-brown/40">
-          Próximos Eventos
-        </h3>
-        <div className="space-y-4">
-          {events.map((e) => (
-            <div key={e.title} className="flex gap-4">
-              <div className="text-center">
-                <span className="block text-xs font-bold text-clay">{e.month}</span>
-                <span className="block font-serif text-lg leading-none">{e.day}</span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold">{e.title}</p>
-                <p className="text-xs text-soil-brown/50">{e.note}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </aside>
   );
 }
