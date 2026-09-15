@@ -6,6 +6,10 @@ export type Ticker = {
   change: string | null;
   dir: "up" | "down" | "flat";
   hint?: string;
+  /** Valor numérico em reais, para cálculos financeiros. */
+  numeric?: number;
+  /** Variação percentual frente ao fechamento anterior. */
+  changePct?: number;
 };
 
 export type NewsItem = {
