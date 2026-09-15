@@ -6,6 +6,10 @@ export type Ticker = {
   change: string | null;
   dir: "up" | "down" | "flat";
   hint?: string;
+  /** Valor numérico em reais, para cálculos financeiros. */
+  numeric?: number;
+  /** Variação percentual frente ao fechamento anterior. */
+  changePct?: number;
 };
 
 export type NewsItem = {
@@ -40,12 +44,12 @@ async function yahooQuote(symbol: string): Promise<Quote | null> {
   }
 }
 
-function pct(current: number, previous: number): { change: string; dir: Ticker["dir"] } {
-  if (!previous) return { change: "0,0%", dir: "flat" };
+function pct(current: number, previous: number): { change: string; dir: Ticker["dir"]; delta: number } {
+  if (!previous) return { change: "0,0%", dir: "flat", delta: 0 };
   const delta = ((current - previous) / previous) * 100;
   const dir: Ticker["dir"] = delta > 0.05 ? "up" : delta < -0.05 ? "down" : "flat";
   const sign = delta > 0 ? "+" : "";
-  return { change: `${sign}${delta.toFixed(1).replace(".", ",")}%`, dir };
+  return { change: `${sign}${delta.toFixed(1).replace(".", ",")}%`, dir, delta };
 }
 
 function brl(value: number): string {
@@ -77,8 +81,8 @@ export async function fetchTickers(): Promise<{ tickers: Ticker[]; usdBrl: numbe
     if (!quote) return;
     const value = convert(quote.price);
     if (value === null) return;
-    const { change, dir } = pct(quote.price, quote.previous);
-    tickers.push({ label, value: brl(value), change, dir, hint });
+    const { change, dir, delta } = pct(quote.price, quote.previous);
+    tickers.push({ label, value: brl(value), change, dir, hint, numeric: value, changePct: delta });
   }
 
   push("Soja", soy, (v) => bagFromBushel(v, 27.2155), "CBOT convertido para R$/saca 60 kg");
@@ -87,8 +91,8 @@ export async function fetchTickers(): Promise<{ tickers: Ticker[]; usdBrl: numbe
   push("Café", coffee, bagFromPound, "ICE convertido para R$/saca 60 kg");
 
   if (usd) {
-    const { change, dir } = pct(usd.price, usd.previous);
-    tickers.push({ label: "Dólar", value: brl(usd.price), change, dir, hint: "USD/BRL" });
+    const { change, dir, delta } = pct(usd.price, usd.previous);
+    tickers.push({ label: "Dólar", value: brl(usd.price), change, dir, hint: "USD/BRL", numeric: usd.price, changePct: delta });
   }
 
   return { tickers, usdBrl: rate, updatedAt: new Date().toISOString() };
