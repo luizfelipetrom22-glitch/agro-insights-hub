@@ -36,21 +36,52 @@ export function Sidebar() {
   const nav = isBuyer ? buyerNav : producerNav;
 
   return (
-    <aside data-tour="sidebar" className="col-span-12 space-y-8 lg:col-span-3">
-      <div>
+    <aside data-tour="sidebar" className="col-span-12 space-y-4 lg:col-span-3 lg:space-y-8">
+      <div className="flex items-start justify-between gap-4 lg:block">
+        <div>
         <h1 className="mb-1 font-serif text-3xl text-harvest-green">TerraIntelligence</h1>
         <p className="font-serif text-sm italic text-soil-brown/60">
           {isBuyer
             ? "Marketplace agrícola para compradores"
             : "Inteligência para proteger sua margem"}
         </p>
+        </div>
+        <div className="mt-1 inline-flex rounded-full bg-soil-brown/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-soil-brown/60 lg:hidden">
+          {isBuyer ? "Comprador" : "Produtor"}
+        </div>
       </div>
 
-      <div className="inline-flex rounded-full bg-soil-brown/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-soil-brown/60">
+      <div className="hidden rounded-full bg-soil-brown/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-soil-brown/60 lg:inline-flex">
         {isBuyer ? "Comprador" : "Produtor"}
       </div>
 
-      <nav className="space-y-1">
+      <details className="rounded-lg border border-soil-brown/10 bg-card lg:hidden">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-harvest-green">
+          Navegação
+        </summary>
+        <nav className="space-y-1 border-t border-soil-brown/10 p-2">
+          {nav.map((item) => {
+            const active = pathname === item.to;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                  active
+                    ? "bg-harvest-green font-medium text-harvest-green-foreground"
+                    : "text-soil-brown/70 hover:bg-soil-brown/5"
+                }`}
+              >
+                <span className="flex items-center gap-3"><Icon className="size-4" aria-hidden />{item.label}</span>
+                {item.premium && <span className="rounded bg-clay px-1.5 py-0.5 text-[9px] uppercase text-clay-foreground">Premium</span>}
+              </Link>
+            );
+          })}
+        </nav>
+      </details>
+
+      <nav className="hidden space-y-1 lg:block">
         {nav.map((item) => {
           const active = pathname === item.to;
           const Icon = item.icon;
