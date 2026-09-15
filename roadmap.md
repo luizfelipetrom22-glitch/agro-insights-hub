@@ -5,4 +5,4 @@
   - [x] Reorganizar menu e painel nos quatro pilares
   - [x] Remover números demonstrativos do destaque principal
   - [x] Atualizar orientação inicial e textos de posicionamento
-  - [ ] Validar a experiência no computador e celular
+  - [x] Validar a experiência no computador e celular
