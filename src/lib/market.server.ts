@@ -91,8 +91,8 @@ export async function fetchTickers(): Promise<{ tickers: Ticker[]; usdBrl: numbe
   push("Café", coffee, bagFromPound, "ICE convertido para R$/saca 60 kg");
 
   if (usd) {
-    const { change, dir } = pct(usd.price, usd.previous);
-    tickers.push({ label: "Dólar", value: brl(usd.price), change, dir, hint: "USD/BRL" });
+    const { change, dir, delta } = pct(usd.price, usd.previous);
+    tickers.push({ label: "Dólar", value: brl(usd.price), change, dir, hint: "USD/BRL", numeric: usd.price, changePct: delta });
   }
 
   return { tickers, usdBrl: rate, updatedAt: new Date().toISOString() };
