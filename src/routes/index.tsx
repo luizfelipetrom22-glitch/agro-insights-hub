@@ -5,17 +5,17 @@ import { useEffect, useState } from "react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TerraIntelligence — Inteligência de mercado para o agro" },
+      { title: "TerraIntelligence — Inteligência financeira agrícola" },
       {
         name: "description",
         content:
-          "Preços de commodities, clima, cotações do dólar, notícias do agronegócio, calendário agrícola e relatórios gerados por IA em um só painel.",
+          "Descubra onde sua safra perde margem e transforme mercado, produção e custos em decisões financeiras mais claras.",
       },
-      { property: "og:title", content: "TerraIntelligence — Inteligência de mercado para o agro" },
+      { property: "og:title", content: "TerraIntelligence — Inteligência financeira agrícola" },
       {
         property: "og:description",
         content:
-          "Painel com cotações, clima, dólar, notícias do agronegócio e análises geradas por IA para o produtor rural brasileiro.",
+          "Mercado e contexto da propriedade transformados em decisões para proteger a margem do produtor rural.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -26,20 +26,20 @@ export const Route = createFileRoute("/")({
 
 const features = [
   {
-    title: "Cotações em tempo real",
-    desc: "Soja, milho, boi gordo, café e dólar atualizados continuamente.",
+    title: "Mercado",
+    desc: "Cotações, histórico e dólar como sinais para suas decisões de venda.",
   },
   {
-    title: "Clima e calendário agrícola",
-    desc: "Previsões por região e janelas de plantio e colheita das principais culturas.",
+    title: "Minha produção",
+    desc: "Área, produtividade e custos que dão contexto aos números do mercado.",
   },
   {
-    title: "Notícias do agronegócio",
-    desc: "Os fatos que movem o mercado, curados e resumidos para você.",
+    title: "Rentabilidade",
+    desc: "Custo por saca, ponto de equilíbrio, resultado e margem em uma leitura clara.",
   },
   {
-    title: "Relatórios gerados por IA",
-    desc: "Análises sob medida: cultura, região e período que importam para a sua safra.",
+    title: "Decisão",
+    desc: "Simule mudanças de preço, produtividade e custos antes de agir.",
   },
 ];
 
@@ -78,15 +78,14 @@ function Landing() {
       <section className="mx-auto max-w-[1200px] px-6 pt-12 pb-20">
         <div className="max-w-2xl">
           <span className="rounded-full border border-harvest-green/20 bg-harvest-green/5 px-3 py-1 text-xs font-semibold text-harvest-green">
-            Inteligência de mercado para o produtor
+            Inteligência de decisão para o produtor
           </span>
           <h1 className="mt-6 font-serif text-5xl leading-tight sm:text-6xl">
-            Tudo que move a sua safra, em um só painel.
+            Veja onde sua safra perde margem. Decida como melhorar.
           </h1>
           <p className="mt-5 max-w-lg text-lg text-soil-brown/70">
-            Reunimos cotações de commodities, clima, dólar, notícias, calendário
-            agrícola e relatórios de IA para você decidir com confiança — e ainda
-            recebe alertas por WhatsApp nos momentos certos.
+            O mercado fornece os sinais. Sua propriedade fornece o contexto. A
+            TerraIntelligence transforma os dois em impacto financeiro e próxima ação.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -107,7 +106,7 @@ function Landing() {
 
       {/* Features */}
       <section id="recursos" className="mx-auto max-w-[1200px] px-6 py-16">
-        <h2 className="font-serif text-3xl">Tudo que você precisa, em um lugar</h2>
+        <h2 className="font-serif text-3xl">Do dado à decisão financeira</h2>
         <div className="mt-10 grid gap-6 sm:grid-cols-2">
           {features.map((f) => (
             <div
