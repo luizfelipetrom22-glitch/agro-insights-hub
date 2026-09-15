@@ -395,6 +395,57 @@ export type Database = {
         }
         Relationships: []
       }
+      producer_seasons: {
+        Row: {
+          area_hectares: number | null
+          created_at: string
+          crop: string | null
+          expected_yield_bags_ha: number | null
+          freight_storage_cost_ha: number | null
+          harvest_cost_ha: number | null
+          id: string
+          land_cost_ha: number | null
+          operation_cost_ha: number | null
+          season_name: string | null
+          seeds_fertilizers_cost_ha: number | null
+          target_margin_pct: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          area_hectares?: number | null
+          created_at?: string
+          crop?: string | null
+          expected_yield_bags_ha?: number | null
+          freight_storage_cost_ha?: number | null
+          harvest_cost_ha?: number | null
+          id?: string
+          land_cost_ha?: number | null
+          operation_cost_ha?: number | null
+          season_name?: string | null
+          seeds_fertilizers_cost_ha?: number | null
+          target_margin_pct?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          area_hectares?: number | null
+          created_at?: string
+          crop?: string | null
+          expected_yield_bags_ha?: number | null
+          freight_storage_cost_ha?: number | null
+          harvest_cost_ha?: number | null
+          id?: string
+          land_cost_ha?: number | null
+          operation_cost_ha?: number | null
+          season_name?: string | null
+          seeds_fertilizers_cost_ha?: number | null
+          target_margin_pct?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

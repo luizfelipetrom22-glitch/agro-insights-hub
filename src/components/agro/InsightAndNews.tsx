@@ -22,14 +22,14 @@ export function InsightAndNews() {
     >
       <div className="space-y-4">
         <h3 className="flex items-center gap-2 font-serif text-xl">
-          Análise de Mercado IA
+          Leitura geral do mercado
           <span className="rounded-full border border-harvest-green/20 px-2 py-0.5 text-[10px] text-harvest-green">
             {insight.isFetching ? "Gerando…" : "Atualizado"}
           </span>
         </h3>
         <div className="rounded-2xl border border-soil-brown/10 bg-card p-6">
           <div className="mb-4 flex items-start justify-between">
-            <h4 className="font-semibold">Leitura do mercado agora</h4>
+            <h4 className="font-semibold">O que está movendo o mercado</h4>
             <span className="text-xs text-soil-brown/40">
               {insight.data?.updatedAt ? relativeTime(insight.data.updatedAt) : ""}
             </span>
@@ -40,6 +40,7 @@ export function InsightAndNews() {
               : (insight.data?.text ??
                 "Não foi possível gerar a análise agora. As cotações continuam atualizando na barra do topo.")}
           </p>
+          <p className="mt-4 border-t border-soil-brown/10 pt-3 text-[11px] text-soil-brown/45">Análise geral. Ainda não considera os dados financeiros da sua propriedade.</p>
         </div>
       </div>
 

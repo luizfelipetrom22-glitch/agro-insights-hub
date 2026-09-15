@@ -20,7 +20,7 @@ export function HistoricalComparison() {
         <div>
           <h3 className="font-serif text-xl">Comparação Histórica</h3>
           <p className="text-sm text-soil-brown/50">
-            Preços reais dos últimos 24 meses {data?.unit ? `(${data.unit})` : ""}
+            Referência de bolsa convertida dos últimos 24 meses {data?.unit ? `(${data.unit})` : ""}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -45,6 +45,7 @@ export function HistoricalComparison() {
       {!isLoading && months.length === 0 && (
         <p className="text-sm text-soil-brown/50">Histórico indisponível no momento.</p>
       )}
+      <p className="mt-5 text-[11px] text-soil-brown/45">Referência de mercado, não preço local de balcão. Frete, qualidade, praça e condições comerciais podem alterar o valor recebido.</p>
 
       {months.length > 0 && (
         <>

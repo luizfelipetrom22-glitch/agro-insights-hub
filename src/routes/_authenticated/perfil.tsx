@@ -53,7 +53,7 @@ function PerfilPage() {
         <p className="mt-1 text-sm text-soil-brown/60">
           {isBuyer
             ? "Complete seus dados para que produtores conheçam sua empresa."
-            : "Complete os dados da sua fazenda para ganhar credibilidade com compradores."}
+            : "Mantenha seus dados de contato e apresentação. Os números da safra ficam em Minha Produção."}
         </p>
       </header>
       {session ? (

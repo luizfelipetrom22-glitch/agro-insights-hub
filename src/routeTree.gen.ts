@@ -19,6 +19,7 @@ import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authentic
 import { Route as AuthenticatedCompradorRouteImport } from './routes/_authenticated/comprador'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedMensagensRouteImport } from './routes/_authenticated/mensagens'
+import { Route as AuthenticatedMinhaProducaoRouteImport } from './routes/_authenticated/minha-producao'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedPedidosRouteImport } from './routes/_authenticated/pedidos'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
@@ -76,6 +77,12 @@ const AuthenticatedMensagensRoute = AuthenticatedMensagensRouteImport.update({
   path: '/mensagens',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMinhaProducaoRoute =
+  AuthenticatedMinhaProducaoRouteImport.update({
+    id: '/minha-producao',
+    path: '/minha-producao',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   id: '/painel',
   path: '/painel',
@@ -122,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/comprador': typeof AuthenticatedCompradorRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/mensagens': typeof AuthenticatedMensagensRoute
+  '/minha-producao': typeof AuthenticatedMinhaProducaoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -140,6 +148,7 @@ export interface FileRoutesByTo {
   '/comprador': typeof AuthenticatedCompradorRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/mensagens': typeof AuthenticatedMensagensRoute
+  '/minha-producao': typeof AuthenticatedMinhaProducaoRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -160,6 +169,7 @@ export interface FileRoutesById {
   '/_authenticated/comprador': typeof AuthenticatedCompradorRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/mensagens': typeof AuthenticatedMensagensRoute
+  '/_authenticated/minha-producao': typeof AuthenticatedMinhaProducaoRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/_authenticated/pedidos': typeof AuthenticatedPedidosRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/comprador'
     | '/favoritos'
     | '/mensagens'
+    | '/minha-producao'
     | '/painel'
     | '/pedidos'
     | '/perfil'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/comprador'
     | '/favoritos'
     | '/mensagens'
+    | '/minha-producao'
     | '/painel'
     | '/pedidos'
     | '/perfil'
@@ -217,6 +229,7 @@ export interface FileRouteTypes {
     | '/_authenticated/comprador'
     | '/_authenticated/favoritos'
     | '/_authenticated/mensagens'
+    | '/_authenticated/minha-producao'
     | '/_authenticated/painel'
     | '/_authenticated/pedidos'
     | '/_authenticated/perfil'
@@ -305,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMensagensRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/minha-producao': {
+      id: '/_authenticated/minha-producao'
+      path: '/minha-producao'
+      fullPath: '/minha-producao'
+      preLoaderRoute: typeof AuthenticatedMinhaProducaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/painel': {
       id: '/_authenticated/painel'
       path: '/painel'
@@ -365,6 +385,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCompradorRoute: typeof AuthenticatedCompradorRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedMensagensRoute: typeof AuthenticatedMensagensRoute
+  AuthenticatedMinhaProducaoRoute: typeof AuthenticatedMinhaProducaoRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedPedidosRoute: typeof AuthenticatedPedidosRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
@@ -381,6 +402,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCompradorRoute: AuthenticatedCompradorRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedMensagensRoute: AuthenticatedMensagensRoute,
+  AuthenticatedMinhaProducaoRoute: AuthenticatedMinhaProducaoRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedPedidosRoute: AuthenticatedPedidosRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,

@@ -1,35 +1,32 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { BarChart3, CalendarDays, FileText, LayoutDashboard, MessageSquare, PackageOpen, ShieldCheck, Sprout, UserRound } from "lucide-react";
 import { useProfile } from "@/hooks/use-profile";
 
-type NavItem = { label: string; to: string; premium?: boolean };
+type NavItem = { label: string; to: string; premium?: boolean; icon: typeof LayoutDashboard; group?: string };
 
 const producerNav: NavItem[] = [
-  { label: "Painel Geral", to: "/painel" },
-  { label: "Meus Anúncios", to: "/anuncios" },
-  { label: "Pedidos de Compra", to: "/pedidos" },
-  { label: "Mensagens", to: "/mensagens" },
-  { label: "Calendário Agrícola", to: "/calendario" },
-  { label: "Relatórios IA", to: "/relatorios" },
-  { label: "Simulador de Lucro", to: "/simulador", premium: true },
-  { label: "Segurança", to: "/seguranca" },
-  { label: "Meu Perfil", to: "/perfil" },
+  { label: "Visão Geral", to: "/painel", icon: LayoutDashboard, group: "Decisão financeira" },
+  { label: "Minha Produção", to: "/minha-producao", icon: Sprout },
+  { label: "Simular Decisão", to: "/simulador", premium: true, icon: BarChart3 },
+  { label: "Análises IA", to: "/relatorios", icon: FileText },
+  { label: "Meus Anúncios", to: "/anuncios", icon: PackageOpen, group: "Comercialização" },
+  { label: "Pedidos de Compra", to: "/pedidos", icon: FileText },
+  { label: "Mensagens", to: "/mensagens", icon: MessageSquare },
+  { label: "Calendário Agrícola", to: "/calendario", icon: CalendarDays, group: "Apoio" },
+  { label: "Segurança", to: "/seguranca", icon: ShieldCheck },
+  { label: "Meu Perfil", to: "/perfil", icon: UserRound },
 ];
 
 const buyerNav: NavItem[] = [
-  { label: "Painel do Comprador", to: "/comprador" },
-  { label: "Buscar Produtos", to: "/buscar" },
-  { label: "Favoritos", to: "/favoritos" },
-  { label: "Meus Pedidos", to: "/pedidos" },
-  { label: "Mensagens", to: "/mensagens" },
-  { label: "Relatórios IA", to: "/relatorios" },
-  { label: "Alertas de Preço", to: "/simulador", premium: true },
-  { label: "Segurança", to: "/seguranca" },
-  { label: "Meu Perfil", to: "/perfil" },
-];
-
-const events = [
-  { month: "MAR", day: "15", title: "Início Plantio Safrinha", note: "Previsão de chuva ideal" },
-  { month: "MAR", day: "22", title: "Relatório USDA", note: "Projeção global de estoques" },
+  { label: "Painel do Comprador", to: "/comprador", icon: LayoutDashboard },
+  { label: "Buscar Produtos", to: "/buscar", icon: PackageOpen },
+  { label: "Favoritos", to: "/favoritos", icon: Sprout },
+  { label: "Meus Pedidos", to: "/pedidos", icon: FileText },
+  { label: "Mensagens", to: "/mensagens", icon: MessageSquare },
+  { label: "Relatórios IA", to: "/relatorios", icon: BarChart3 },
+  { label: "Alertas de Preço", to: "/simulador", premium: true, icon: CalendarDays },
+  { label: "Segurança", to: "/seguranca", icon: ShieldCheck },
+  { label: "Meu Perfil", to: "/perfil", icon: UserRound },
 ];
 
 export function Sidebar() {
@@ -39,26 +36,59 @@ export function Sidebar() {
   const nav = isBuyer ? buyerNav : producerNav;
 
   return (
-    <aside data-tour="sidebar" className="col-span-12 space-y-8 lg:col-span-3">
-      <div>
+    <aside data-tour="sidebar" className="col-span-12 space-y-4 lg:col-span-3 lg:space-y-8">
+      <div className="flex items-start justify-between gap-4 lg:block">
+        <div>
         <h1 className="mb-1 font-serif text-3xl text-harvest-green">TerraIntelligence</h1>
         <p className="font-serif text-sm italic text-soil-brown/60">
           {isBuyer
             ? "Marketplace agrícola para compradores"
-            : "Inteligência de mercado para o produtor moderno"}
+            : "Inteligência para proteger sua margem"}
         </p>
+        </div>
+        <div className="mt-1 inline-flex rounded-full bg-soil-brown/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-soil-brown/60 lg:hidden">
+          {isBuyer ? "Comprador" : "Produtor"}
+        </div>
       </div>
 
-      <div className="inline-flex rounded-full bg-soil-brown/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-soil-brown/60">
-        {isBuyer ? "🛒 Comprador" : "🌾 Produtor"}
+      <div className="hidden rounded-full bg-soil-brown/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-soil-brown/60 lg:inline-flex">
+        {isBuyer ? "Comprador" : "Produtor"}
       </div>
 
-      <nav className="space-y-1">
+      <details className="rounded-lg border border-soil-brown/10 bg-card lg:hidden">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-harvest-green">
+          Navegação
+        </summary>
+        <nav className="space-y-1 border-t border-soil-brown/10 p-2">
+          {nav.map((item) => {
+            const active = pathname === item.to;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                  active
+                    ? "bg-harvest-green font-medium text-harvest-green-foreground"
+                    : "text-soil-brown/70 hover:bg-soil-brown/5"
+                }`}
+              >
+                <span className="flex items-center gap-3"><Icon className="size-4" aria-hidden />{item.label}</span>
+                {item.premium && <span className="rounded bg-clay px-1.5 py-0.5 text-[9px] uppercase text-clay-foreground">Premium</span>}
+              </Link>
+            );
+          })}
+        </nav>
+      </details>
+
+      <nav className="hidden space-y-1 lg:block">
         {nav.map((item) => {
           const active = pathname === item.to;
+          const Icon = item.icon;
           return (
+            <div key={item.to}>
+              {item.group && <p className="mb-2 mt-5 px-4 text-[10px] font-bold uppercase tracking-widest text-soil-brown/35">{item.group}</p>}
             <Link
-              key={item.to}
               to={item.to}
               className={`flex items-center justify-between rounded-lg px-4 py-3 transition-colors ${
                 active
@@ -66,36 +96,18 @@ export function Sidebar() {
                   : "text-soil-brown/70 hover:bg-soil-brown/5"
               }`}
             >
-              <span>{item.label}</span>
+              <span className="flex items-center gap-3"><Icon className="size-4" aria-hidden />{item.label}</span>
               {item.premium && (
                 <span className="rounded bg-clay px-1.5 py-0.5 text-[10px] uppercase tracking-tighter text-clay-foreground">
                   Premium
                 </span>
               )}
             </Link>
+            </div>
           );
         })}
       </nav>
 
-      <div className="rounded-2xl border border-soil-brown/10 bg-card p-6">
-        <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-soil-brown/40">
-          Próximos Eventos
-        </h3>
-        <div className="space-y-4">
-          {events.map((e) => (
-            <div key={e.title} className="flex gap-4">
-              <div className="text-center">
-                <span className="block text-xs font-bold text-clay">{e.month}</span>
-                <span className="block font-serif text-lg leading-none">{e.day}</span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold">{e.title}</p>
-                <p className="text-xs text-soil-brown/50">{e.note}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </aside>
   );
 }

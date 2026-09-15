@@ -10,43 +10,43 @@ export type TourStep = {
 
 export const TOUR_STEPS: TourStep[] = [
   {
-    selector: "[data-tour='market-bar']",
-    title: "Barra de cotações",
+    selector: "[data-tour='decision-overview']",
+    title: "Comece pelo contexto da sua safra",
     description:
-      "Aqui ficam os preços de soja, milho, boi, café, dólar e clima — sempre atualizados no topo da tela.",
+      "Cadastre sua produção para transformar custos e produtividade em margem, ponto de equilíbrio e decisões.",
     placement: "bottom",
   },
   {
     selector: "[data-tour='sidebar']",
-    title: "Menu de navegação",
+    title: "Quatro passos para decidir melhor",
     description:
-      "Use o menu para trocar entre Painel Geral, Calendário Agrícola, Relatórios IA e o Simulador de Lucro (Premium).",
+      "Use Visão Geral, Minha Produção, Simular Decisão e Análises IA para acompanhar sua rentabilidade.",
     placement: "right",
   },
   {
-    selector: "[data-tour='premium']",
-    title: "Recurso Premium",
+    selector: "[data-tour='market-bar']",
+    title: "Mercado como sinal",
     description:
-      "Área do plano pago: custo por hectare, break-even, margem líquida e ROI previsto, com simulação e exportação.",
+      "Cotações, dólar e clima continuam atualizados. Eles ganham significado quando cruzados com os dados da sua safra.",
     placement: "bottom",
   },
   {
     selector: "[data-tour='insight-news']",
-    title: "Análise IA e Notícias",
+    title: "Contexto antes da ação",
     description:
-      "À esquerda, relatórios de mercado gerados por IA. À direita, as últimas notícias do agronegócio.",
+      "A análise geral e as notícias ajudam a entender os movimentos que podem afetar suas decisões.",
     placement: "bottom",
   },
   {
     selector: "[data-tour='history']",
-    title: "Comparação Histórica",
+    title: "Referência histórica",
     description:
-      "Compare produtividade e rentabilidade entre safras (22/23 x 23/24) e veja o status do mês.",
+      "Compare a referência de mercado dos últimos 24 meses. Ela não substitui o preço local da sua região.",
     placement: "top",
   },
 ];
 
-const STORAGE_KEY = "terra-tour-seen";
+const STORAGE_KEY = "terra-tour-financial-seen";
 
 function hasSeenTour() {
   try {
