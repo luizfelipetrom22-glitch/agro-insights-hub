@@ -38,12 +38,3 @@ export function DecisionOverview() {
     </section>
   );
 }
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-[11px] font-bold uppercase tracking-widest text-soil-brown/40">{label}</dt>
-      <dd className="mt-1 font-serif text-2xl text-soil-brown">{value}</dd>
-    </div>
-  );
-}
