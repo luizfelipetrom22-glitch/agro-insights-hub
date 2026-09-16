@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { AppShell } from "@/components/agro/AppShell";
 import { DecisionOverview } from "@/components/agro/DecisionOverview";
+import { ProfitRadar } from "@/components/agro/ProfitRadar";
 import { InsightAndNews } from "@/components/agro/InsightAndNews";
 import { HistoricalComparison } from "@/components/agro/HistoricalComparison";
 import { OnboardingTour } from "@/components/agro/OnboardingTour";
