@@ -90,8 +90,8 @@ export function buildProfitRadar(
       id: "margem",
       tone: "gain",
       kind: "Oportunidade",
-      title: `Margem estimada de ${formatMoney(marginPerBag)} por saca`,
-      detail: `Com a referência atual de ${formatMoney(price)}/sc e o seu custo de ${formatMoney(base.costPerBag)}/sc, o resultado estimado da safra é ${formatMoney(result)}.`,
+      title: `Margem estimada de ${formatPrice(marginPerBag)} por saca`,
+      detail: `Com a referência atual de ${formatPrice(price)}/sc e o seu custo de ${formatPrice(base.costPerBag)}/sc, o resultado estimado da safra é ${formatMoney(result)}.`,
       impact: `Resultado estimado ${formatMoney(result)}`,
       actionLabel: "Simular venda",
       to: "/simulador",
@@ -102,7 +102,7 @@ export function buildProfitRadar(
       tone: "loss",
       kind: "Risco",
       title: `Preço abaixo do seu ponto de equilíbrio`,
-      detail: `A referência atual (${formatMoney(price)}/sc) está ${formatMoney(Math.abs(marginPerBag))} abaixo do seu custo por saca (${formatMoney(base.costPerBag)}/sc).`,
+      detail: `A referência atual (${formatPrice(price)}/sc) está ${formatPrice(Math.abs(marginPerBag))} abaixo do seu custo por saca (${formatPrice(base.costPerBag)}/sc).`,
       impact: `Prejuízo estimado ${formatMoney(Math.abs(result))}`,
       actionLabel: "Ver custos",
       to: "/minha-producao",
@@ -114,8 +114,8 @@ export function buildProfitRadar(
       id: "meta",
       tone: "neutral",
       kind: "Risco",
-      title: `Faltam ${formatMoney(Math.abs(gapToTarget))} por saca para sua margem de ${base.margin.toLocaleString("pt-BR")}%`,
-      detail: `Você precisaria vender a ${formatMoney(base.targetPrice)}/sc para atingir a margem desejada.`,
+      title: `Faltam ${formatPrice(Math.abs(gapToTarget))} por saca para sua margem de ${base.margin.toLocaleString("pt-BR")}%`,
+      detail: `Você precisaria vender a ${formatPrice(base.targetPrice)}/sc para atingir a margem desejada.`,
       impact: `Diferença total ${formatMoney(Math.abs(gapToTarget) * base.production)}`,
       actionLabel: "Simular preço-alvo",
       to: "/simulador",
@@ -125,8 +125,8 @@ export function buildProfitRadar(
       id: "meta",
       tone: "gain",
       kind: "Oportunidade",
-      title: `Referência ${formatMoney(gapToTarget)} por saca acima da sua meta`,
-      detail: `Sua margem desejada é atingida a partir de ${formatMoney(base.targetPrice)}/sc. A referência atual já supera esse valor.`,
+      title: `Referência ${formatPrice(gapToTarget)} por saca acima da sua meta`,
+      detail: `Sua margem desejada é atingida a partir de ${formatPrice(base.targetPrice)}/sc. A referência atual já supera esse valor.`,
       impact: `Ganho acima da meta ${formatMoney(gapToTarget * base.production)}`,
       actionLabel: "Simular venda",
       to: "/simulador",
@@ -173,6 +173,11 @@ export function buildProfitRadar(
     gapToTarget,
     items,
   };
+}
+
+/** Valores por saca precisam de centavos. */
+export function formatPrice(value: number) {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export function formatMoney(value: number) {

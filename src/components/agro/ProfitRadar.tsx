@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/use-profile";
 import { useTickers } from "@/hooks/use-market";
 import { seasonCompleteness, useProducerSeason } from "@/hooks/use-producer-season";
-import { buildProfitRadar, formatMoney, seasonFinancialBase } from "@/lib/profit";
+import { buildProfitRadar, formatMoney, formatPrice, seasonFinancialBase } from "@/lib/profit";
 
 /** Culturas com cotação de referência disponível hoje. */
 const QUOTED_CROPS = ["Soja", "Milho", "Café", "Boi Gordo"];
@@ -60,7 +60,7 @@ export function ProfitRadar() {
               <p
                 className={`mt-3 font-serif text-4xl ${radar.marginPerBag >= 0 ? "text-harvest-green" : "text-loss"}`}
               >
-                {formatMoney(radar.marginPerBag)}{" "}
+                {formatPrice(radar.marginPerBag)}{" "}
                 <span className="text-xl text-soil-brown/55">/ saca</span>
               </p>
               <p className="mt-2 max-w-xl text-sm text-soil-brown/65">
@@ -68,13 +68,13 @@ export function ProfitRadar() {
                 {radar.marginPct.toFixed(1).replace(".", ",")}%.
               </p>
               <p className="mt-3 text-[11px] text-soil-brown/45">
-                {ticker.hint ?? "Referência de bolsa convertida"} · {formatMoney(radar.price)}/sc ·
+                {ticker.hint ?? "Referência de bolsa convertida"} · {formatPrice(radar.price)}/sc ·
                 referência de mercado, não preço local de balcão.
               </p>
             </div>
             <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-l border-soil-brown/10 pl-6">
-              <Metric label="Ponto de equilíbrio" value={`${formatMoney(radar.breakevenPrice)}/sc`} />
-              <Metric label="Preço para sua meta" value={`${formatMoney(base.targetPrice)}/sc`} />
+              <Metric label="Ponto de equilíbrio" value={`${formatPrice(radar.breakevenPrice)}/sc`} />
+              <Metric label="Preço para sua meta" value={`${formatPrice(base.targetPrice)}/sc`} />
               <Metric label="Receita estimada" value={formatMoney(radar.revenue)} />
               <Metric label="Custo total" value={formatMoney(base.totalCost)} />
             </dl>
