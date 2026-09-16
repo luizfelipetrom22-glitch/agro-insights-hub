@@ -40,6 +40,7 @@ function PainelPage() {
   return (
     <AppShell onHelp={tour.start}>
       <DecisionOverview />
+      <ProfitRadar />
       <InsightAndNews />
       <HistoricalComparison />
       <OnboardingTour tour={tour} />
