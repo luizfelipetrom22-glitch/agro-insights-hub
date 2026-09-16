@@ -17,6 +17,13 @@ export const TOUR_STEPS: TourStep[] = [
     placement: "bottom",
   },
   {
+    selector: "[data-tour='profit-radar']",
+    title: "Radar de Lucro",
+    description:
+      "Aqui sua safra é cruzada com a referência de mercado: margem por saca, ponto de equilíbrio, oportunidades e riscos com ação direta.",
+    placement: "bottom",
+  },
+  {
     selector: "[data-tour='sidebar']",
     title: "Quatro passos para decidir melhor",
     description:
