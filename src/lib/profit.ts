@@ -59,6 +59,8 @@ export type RadarItem = {
   impact?: string;
   actionLabel: string;
   to: "/simulador" | "/minha-producao";
+  /** Pré-preenche o simulador ao abrir pelo atalho. */
+  search?: { preco?: number };
 };
 
 export type ProfitRadarResult = {
