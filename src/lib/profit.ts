@@ -97,6 +97,7 @@ export function buildProfitRadar(
       impact: `Resultado estimado ${formatMoney(result)}`,
       actionLabel: "Simular venda",
       to: "/simulador",
+      search: { preco: price },
     });
   } else {
     items.push({
@@ -121,6 +122,7 @@ export function buildProfitRadar(
       impact: `Diferença total ${formatMoney(Math.abs(gapToTarget) * base.production)}`,
       actionLabel: "Simular preço-alvo",
       to: "/simulador",
+      search: { preco: base.targetPrice },
     });
   } else {
     items.push({
@@ -132,6 +134,7 @@ export function buildProfitRadar(
       impact: `Ganho acima da meta ${formatMoney(gapToTarget * base.production)}`,
       actionLabel: "Simular venda",
       to: "/simulador",
+      search: { preco: price },
     });
   }
 
@@ -162,6 +165,7 @@ export function buildProfitRadar(
       impact: `${delta >= 0 ? "+" : "−"}${formatMoney(Math.abs(delta))}`,
       actionLabel: "Simular impacto",
       to: "/simulador",
+      search: { preco: price },
     });
   }
 
