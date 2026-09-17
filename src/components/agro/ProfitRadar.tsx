@@ -103,7 +103,7 @@ export function ProfitRadar() {
                   </div>
                 </div>
                 <Button asChild variant="ghost" className="shrink-0 self-start sm:self-center">
-                  <Link to={item.to}>
+                  <Link to={item.to} {...(item.search ? { search: item.search } : {})}>
                     {item.actionLabel} <ArrowRight aria-hidden />
                   </Link>
                 </Button>

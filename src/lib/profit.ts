@@ -59,6 +59,8 @@ export type RadarItem = {
   impact?: string;
   actionLabel: string;
   to: "/simulador" | "/minha-producao";
+  /** Pré-preenche o simulador ao abrir pelo atalho. */
+  search?: { preco?: number };
 };
 
 export type ProfitRadarResult = {
@@ -95,6 +97,7 @@ export function buildProfitRadar(
       impact: `Resultado estimado ${formatMoney(result)}`,
       actionLabel: "Simular venda",
       to: "/simulador",
+      search: { preco: price },
     });
   } else {
     items.push({
@@ -119,6 +122,7 @@ export function buildProfitRadar(
       impact: `Diferença total ${formatMoney(Math.abs(gapToTarget) * base.production)}`,
       actionLabel: "Simular preço-alvo",
       to: "/simulador",
+      search: { preco: base.targetPrice },
     });
   } else {
     items.push({
@@ -130,6 +134,7 @@ export function buildProfitRadar(
       impact: `Ganho acima da meta ${formatMoney(gapToTarget * base.production)}`,
       actionLabel: "Simular venda",
       to: "/simulador",
+      search: { preco: price },
     });
   }
 
@@ -160,6 +165,7 @@ export function buildProfitRadar(
       impact: `${delta >= 0 ? "+" : "−"}${formatMoney(Math.abs(delta))}`,
       actionLabel: "Simular impacto",
       to: "/simulador",
+      search: { preco: price },
     });
   }
 
@@ -186,4 +192,160 @@ export function formatMoney(value: number) {
     currency: "BRL",
     maximumFractionDigits: 0,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Cenários do simulador (mesmo motor determinístico do Radar)
+// ---------------------------------------------------------------------------
+
+export type ScenarioCosts = {
+  insumos: number;
+  operacao: number;
+  colheita: number;
+  frete: number;
+  terra: number;
+};
+
+export const SCENARIO_COST_LABELS: Record<keyof ScenarioCosts, string> = {
+  insumos: "Insumos (semente, adubo, defensivo)",
+  operacao: "Operação (máquinas, diesel, mão de obra)",
+  colheita: "Colheita e secagem",
+  frete: "Frete e armazenagem",
+  terra: "Arrendamento / custo da terra",
+};
+
+export type ScenarioInput = {
+  areaHectares: number;
+  yieldBagsHa: number;
+  pricePerBag: number;
+  targetMarginPct: number;
+  costs: ScenarioCosts;
+};
+
+export type ScenarioSensitivityRow = {
+  pct: number;
+  price: number;
+  profit: number;
+  delta: number;
+  marginPct: number;
+};
+
+export type ScenarioResult = {
+  costPerHa: number;
+  production: number;
+  revenue: number;
+  totalCost: number;
+  profit: number;
+  marginPct: number;
+  costPerBag: number;
+  targetPrice: number;
+  breakEvenSacas: number;
+  profitPerBag: number;
+  sensitivity: ScenarioSensitivityRow[];
+  breakdown: { key: keyof ScenarioCosts; value: number; share: number; perBag: number }[];
+};
+
+/** Motor determinístico do simulador — usado na tela, nos cenários salvos e na comparação. */
+export function simulateScenario(input: ScenarioInput): ScenarioResult {
+  const { areaHectares: area, yieldBagsHa: prod, pricePerBag: price, targetMarginPct: margemAlvo } = input;
+  const costs = input.costs;
+  const costPerHa = costs.insumos + costs.operacao + costs.colheita + costs.frete + costs.terra;
+  const production = area * prod;
+  const revenue = production * price;
+  const totalCost = area * costPerHa;
+  const profit = revenue - totalCost;
+  const marginPct = revenue > 0 ? (profit / revenue) * 100 : 0;
+  const costPerBag = prod > 0 ? costPerHa / prod : 0;
+  const targetPrice = margemAlvo < 100 ? costPerBag / (1 - margemAlvo / 100) : 0;
+  const breakEvenSacas = price > 0 ? costPerHa / price : 0;
+  const profitPerBag = price - costPerBag;
+  const sensitivity = [-15, -10, -5, 0, 5, 10, 15].map((pct) => {
+    const p = price * (1 + pct / 100);
+    const rev = production * p;
+    const prof = rev - totalCost;
+    return {
+      pct,
+      price: p,
+      profit: prof,
+      delta: prof - profit,
+      marginPct: rev > 0 ? (prof / rev) * 100 : 0,
+    };
+  });
+  const breakdown = (Object.keys(SCENARIO_COST_LABELS) as (keyof ScenarioCosts)[])
+    .map((key) => ({
+      key,
+      value: costs[key],
+      share: costPerHa > 0 ? (costs[key] / costPerHa) * 100 : 0,
+      perBag: prod > 0 ? costs[key] / prod : 0,
+    }))
+    .sort((a, b) => b.value - a.value);
+  return {
+    costPerHa,
+    production,
+    revenue,
+    totalCost,
+    profit,
+    marginPct,
+    costPerBag,
+    targetPrice,
+    breakEvenSacas,
+    profitPerBag,
+    sensitivity,
+    breakdown,
+  };
+}
+
+/** Pré-preenche o simulador a partir da safra cadastrada (custos ausentes viram 0). */
+export function scenarioInputFromSeason(season: ProducerSeason): ScenarioInput {
+  return {
+    areaHectares: Number(season.area_hectares) || 0,
+    yieldBagsHa: Number(season.expected_yield_bags_ha) || 0,
+    pricePerBag: 0,
+    targetMarginPct: Number(season.target_margin_pct) || 0,
+    costs: {
+      insumos: Number(season.seeds_fertilizers_cost_ha) || 0,
+      operacao: Number(season.operation_cost_ha) || 0,
+      colheita: Number(season.harvest_cost_ha) || 0,
+      frete: Number(season.freight_storage_cost_ha) || 0,
+      terra: Number(season.land_cost_ha) || 0,
+    },
+  };
+}
+
+type SimulationRow = {
+  area_hectares: number;
+  yield_bags_per_ha: number;
+  price_per_bag: number;
+  input_cost: number;
+  target_margin_pct: number | null;
+  seeds_fertilizers_cost_ha: number | null;
+  operation_cost_ha: number | null;
+  harvest_cost_ha: number | null;
+  freight_storage_cost_ha: number | null;
+  land_cost_ha: number | null;
+};
+
+/** Converte um cenário salvo no banco para o formato do motor. */
+export function scenarioInputFromRow(row: SimulationRow): ScenarioInput {
+  const hasDetailedCosts =
+    row.seeds_fertilizers_cost_ha !== null ||
+    row.operation_cost_ha !== null ||
+    row.harvest_cost_ha !== null ||
+    row.freight_storage_cost_ha !== null ||
+    row.land_cost_ha !== null;
+  return {
+    areaHectares: Number(row.area_hectares) || 0,
+    yieldBagsHa: Number(row.yield_bags_per_ha) || 0,
+    pricePerBag: Number(row.price_per_bag) || 0,
+    targetMarginPct: Number(row.target_margin_pct) || 0,
+    costs: hasDetailedCosts
+      ? {
+          insumos: Number(row.seeds_fertilizers_cost_ha) || 0,
+          operacao: Number(row.operation_cost_ha) || 0,
+          colheita: Number(row.harvest_cost_ha) || 0,
+          frete: Number(row.freight_storage_cost_ha) || 0,
+          terra: Number(row.land_cost_ha) || 0,
+        }
+      : { insumos: Number(row.input_cost) || 0, operacao: 0, colheita: 0, frete: 0, terra: 0 },
+  };
 }

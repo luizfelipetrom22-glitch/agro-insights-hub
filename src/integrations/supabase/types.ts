@@ -578,10 +578,17 @@ export type Database = {
           created_at: string
           crop: string
           exchange_rate: number
+          freight_storage_cost_ha: number | null
+          harvest_cost_ha: number | null
           id: string
           input_cost: number
+          land_cost_ha: number | null
+          name: string | null
+          operation_cost_ha: number | null
           price_per_bag: number
           result: Json | null
+          seeds_fertilizers_cost_ha: number | null
+          target_margin_pct: number | null
           updated_at: string
           user_id: string
           yield_bags_per_ha: number
@@ -591,10 +598,17 @@ export type Database = {
           created_at?: string
           crop: string
           exchange_rate?: number
+          freight_storage_cost_ha?: number | null
+          harvest_cost_ha?: number | null
           id?: string
           input_cost?: number
+          land_cost_ha?: number | null
+          name?: string | null
+          operation_cost_ha?: number | null
           price_per_bag?: number
           result?: Json | null
+          seeds_fertilizers_cost_ha?: number | null
+          target_margin_pct?: number | null
           updated_at?: string
           user_id: string
           yield_bags_per_ha?: number
@@ -604,10 +618,17 @@ export type Database = {
           created_at?: string
           crop?: string
           exchange_rate?: number
+          freight_storage_cost_ha?: number | null
+          harvest_cost_ha?: number | null
           id?: string
           input_cost?: number
+          land_cost_ha?: number | null
+          name?: string | null
+          operation_cost_ha?: number | null
           price_per_bag?: number
           result?: Json | null
+          seeds_fertilizers_cost_ha?: number | null
+          target_margin_pct?: number | null
           updated_at?: string
           user_id?: string
           yield_bags_per_ha?: number
