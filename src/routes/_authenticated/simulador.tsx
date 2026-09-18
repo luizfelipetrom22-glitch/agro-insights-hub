@@ -25,7 +25,7 @@ type SimuladorSearch = { preco?: number };
 
 export const Route = createFileRoute("/_authenticated/simulador")({
   validateSearch: (search: Record<string, unknown>): SimuladorSearch => {
-    const preco = Number(search.preco);
+    const preco = Number(search["preco"]);
     return Number.isFinite(preco) && preco > 0 ? { preco } : {};
   },
   head: () => ({
@@ -87,10 +87,11 @@ function SimuladorPage() {
       setInput((prev) => ({ ...prev, pricePerBag: preco }));
       return;
     }
-    if (season.data) {
+    const data = season.data;
+    if (data) {
       hydratedFrom.current = "season";
       setInput((prev) => {
-        const fromSeason = scenarioInputFromSeason(season.data);
+        const fromSeason = scenarioInputFromSeason(data);
         return { ...fromSeason, pricePerBag: prev.pricePerBag };
       });
       setLoadedFromSeason(true);
