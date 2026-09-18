@@ -19,3 +19,8 @@
   - [x] Salvar, reabrir, renomear e excluir cenários
   - [x] Comparar dois cenários lado a lado com diferença em reais
   - [x] Atalhos do Radar abrem o simulador com o preço relevante
+
+- [x] Fase 4 — IA como analista da propriedade
+  - [x] Server function que responde só com os dados reais da safra + referência
+  - [x] Bloco "Analista da sua safra" no painel com perguntas sugeridas
+  - [x] Sem dados suficientes, orienta a completar a safra em vez de inventar
