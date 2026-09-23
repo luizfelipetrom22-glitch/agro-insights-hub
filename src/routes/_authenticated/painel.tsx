@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { AppShell } from "@/components/agro/AppShell";
 import { DecisionOverview } from "@/components/agro/DecisionOverview";
 import { ProfitRadar } from "@/components/agro/ProfitRadar";
+import { MarginAlerts } from "@/components/agro/MarginAlerts";
 import { PropertyAnalyst } from "@/components/agro/PropertyAnalyst";
 import { InsightAndNews } from "@/components/agro/InsightAndNews";
 import { HistoricalComparison } from "@/components/agro/HistoricalComparison";
@@ -43,6 +44,7 @@ function PainelPage() {
     <AppShell onHelp={tour.start}>
       <DecisionOverview />
       <ProfitRadar />
+      <MarginAlerts />
       <PropertyAnalyst />
       <InsightAndNews />
       <HistoricalComparison />
