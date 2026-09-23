@@ -24,3 +24,7 @@
   - [x] Server function que responde só com os dados reais da safra + referência
   - [x] Bloco "Analista da sua safra" no painel com perguntas sugeridas
   - [x] Sem dados suficientes, orienta a completar a safra em vez de inventar
+
+- [x] Fase 5 — Alertas personalizados de margem
+  - [x] Soja e milho: aviso abaixo do ponto de equilíbrio ou do preço da meta
+  - [x] Um aviso por dia por condição, com atalho ao simulador

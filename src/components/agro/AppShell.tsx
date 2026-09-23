@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { MarketBar } from "./MarketBar";
 import { Sidebar } from "./Sidebar";
+import { useMarginAlertWatcher } from "@/hooks/use-margin-alerts";
 
 export function AppShell({
   children,
@@ -9,6 +10,7 @@ export function AppShell({
   children: ReactNode;
   onHelp?: () => void;
 }) {
+  useMarginAlertWatcher();
   return (
     <div className="min-h-screen bg-background font-sans text-soil-brown selection:bg-clay/20">
       <MarketBar {...(onHelp ? { onHelp } : {})} />
