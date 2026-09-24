@@ -53,6 +53,27 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_usage: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       alerts: {
         Row: {
           active: boolean
@@ -395,6 +416,24 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_interest: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       producer_seasons: {
         Row: {
           area_hectares: number | null
@@ -656,6 +695,24 @@ export type Database = {
         }
         Relationships: []
       }
+      user_plans: {
+        Row: {
+          plan: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          plan?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          plan?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -683,6 +740,7 @@ export type Database = {
         Args: { _conversation_id: string; _sender: string }
         Returns: boolean
       }
+      current_plan: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
