@@ -15,6 +15,13 @@
       "when": 1789681441203,
       "tag": "0001_extend_simulations_scenarios",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790280325730,
+      "tag": "0002_plans_and_ai_usage",
+      "breakpoints": true
     }
   ]
 }
