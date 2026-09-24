@@ -1,5 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { completeText } from "./ai-gateway.server";
+import { checkAndLogUsage } from "./plan.server";
+import { FREE_LIMITS } from "./plan-limits";
+
+const SYSTEM =
+  "Você é o analista financeiro da propriedade rural do usuário, dentro da plataforma TerraIntelligence. " +
+  "Responda em português do Brasil, tom direto e prático, no máximo 120 palavras, sem saudações nem listas longas. " +
+  "Use SOMENTE os números fornecidos no contexto; nunca invente dados, preços ou benchmarks. " +
+  "Se faltar informação para responder, diga claramente o que falta e oriente o produtor a completar o cadastro da safra. " +
+  "Sempre que citar a cotação, deixe claro que é referência de bolsa convertida, não preço local.";
 
 const AnalystInput = z.object({
   question: z.string().min(3).max(500),
@@ -34,10 +45,17 @@ const AnalystInput = z.object({
  * números reais da safra e da cotação de referência enviados no contexto.
  */
 export const askPropertyAnalyst = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => AnalystInput.parse(input))
-  .handler(async ({ data }) => {
-    const key = process.env["LOVABLE_API_KEY"];
-    if (!key) throw new Error("Análise por IA indisponível no momento (configuração ausente).");
+  .handler(async ({ data, context }) => {
+    await checkAndLogUsage(
+      context.supabase,
+      context.userId,
+      "analyst",
+      FREE_LIMITS.analystPerDay,
+      1,
+      `No plano Grátis são ${FREE_LIMITS.analystPerDay} perguntas por dia. Volte amanhã ou conheça o Premium.`,
+    );
 
     const c = data.context;
     const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 2 });
@@ -52,64 +70,10 @@ export const askPropertyAnalyst = createServerFn({ method: "POST" })
         : "Não há cotação de referência disponível para esta cultura no momento.",
     ].join("\n");
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": key,
-        Authorization: `Bearer ${key}`,
-        "X-Lovable-AIG-SDK": "fetch",
-      },
-      body: JSON.stringify({
-        model: "openai/gpt-6-astra",
-        stream: true,
-        reasoning_effort: "low",
-        max_completion_tokens: 600,
-        messages: [
-          {
-            role: "system",
-            content:
-              "Você é o analista financeiro da propriedade rural do usuário, dentro da plataforma TerraIntelligence. " +
-              "Responda em português do Brasil, tom direto e prático, no máximo 120 palavras, sem saudações nem listas longas. " +
-              "Use SOMENTE os números fornecidos no contexto; nunca invente dados, preços ou benchmarks. " +
-              "Se faltar informação para responder, diga claramente o que falta e oriente o produtor a completar o cadastro da safra. " +
-              "Sempre que citar a cotação, deixe claro que é referência de bolsa convertida, não preço local.",
-          },
-          { role: "user", content: `Dados da propriedade:\n${linhas}\n\nPergunta do produtor: ${data.question}` },
-        ],
-      }),
-    });
-
-    if (!res.ok || !res.body) {
-      throw new Error("A IA não conseguiu responder agora. Tente novamente em instantes.");
-    }
-
-    // Consome o stream SSE no servidor e devolve apenas o texto final.
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-    let answer = "";
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith("data:")) continue;
-        const payload = trimmed.slice(5).trim();
-        if (payload === "[DONE]") continue;
-        try {
-          const json = JSON.parse(payload) as { choices?: { delta?: { content?: string } }[] };
-          answer += json.choices?.[0]?.delta?.content ?? "";
-        } catch {
-          // ignora linhas parciais
-        }
-      }
-    }
-
-    const text = answer.trim();
-    if (!text) throw new Error("A IA não retornou uma análise. Tente reformular a pergunta.");
-    return { answer: text };
+    const answer = await completeText(
+      SYSTEM,
+      `Dados da propriedade:\n${linhas}\n\nPergunta do produtor: ${data.question}`,
+      600,
+    );
+    return { answer };
   });
