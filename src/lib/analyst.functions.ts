@@ -12,9 +12,7 @@ const SYSTEM =
   "Se faltar informação para responder, diga claramente o que falta e oriente o produtor a completar o cadastro da safra. " +
   "Sempre que citar a cotação, deixe claro que é referência de bolsa convertida, não preço local.";
 
-const AnalystInput = z.object({
-  question: z.string().min(3).max(500),
-  context: z.object({
+export const SeasonContext = z.object({
     crop: z.string(),
     seasonName: z.string(),
     areaHectares: z.number(),
@@ -37,8 +35,24 @@ const AnalystInput = z.object({
         marginPerBag: z.number(),
       })
       .nullable(),
-  }),
 });
+export type SeasonContextInput = z.infer<typeof SeasonContext>;
+
+const AnalystInput = z.object({ question: z.string().min(3).max(500), context: SeasonContext });
+
+export function describeSeason(c: SeasonContextInput): string {
+  const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 2 });
+  return [
+      `Safra: ${c.seasonName} (${c.crop})`,
+      `Área: ${c.areaHectares} ha · Produtividade: ${c.productivityBagsHa} sacas/ha · Produção estimada: ${Math.round(c.production)} sacas`,
+      `Custo por hectare: ${brl(c.costPerHa)} · Custo total: ${brl(c.totalCost)} · Custo por saca: ${brl(c.costPerBag)}`,
+      `Margem desejada: ${c.targetMarginPct}% · Preço necessário para essa margem: ${brl(c.targetPrice)}/saca`,
+      `Custos por grupo (R$/ha e % do custo): ${c.costBreakdown.map((b) => `${b.label}: ${brl(b.perHa)} (${Math.round(b.share)}%)`).join("; ")}`,
+      c.market
+        ? `Referência de mercado atual: ${brl(c.market.price)}/saca (${c.market.hint}; variação ${c.market.changePct !== null ? `${c.market.changePct.toFixed(1)}%` : "não informada"}). Com essa referência: receita ${brl(c.market.revenue)}, resultado ${brl(c.market.result)}, margem ${c.market.marginPct.toFixed(1)}%, margem por saca ${brl(c.market.marginPerBag)}. A referência é de bolsa convertida, não preço local.`
+        : "Não há cotação de referência disponível para esta cultura no momento.",
+    ].join("\n");
+}
 
 /**
  * Analista da propriedade: responde perguntas do produtor usando apenas os
@@ -57,18 +71,7 @@ export const askPropertyAnalyst = createServerFn({ method: "POST" })
       `No plano Grátis são ${FREE_LIMITS.analystPerDay} perguntas por dia. Volte amanhã ou conheça o Premium.`,
     );
 
-    const c = data.context;
-    const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 2 });
-    const linhas = [
-      `Safra: ${c.seasonName} (${c.crop})`,
-      `Área: ${c.areaHectares} ha · Produtividade: ${c.productivityBagsHa} sacas/ha · Produção estimada: ${Math.round(c.production)} sacas`,
-      `Custo por hectare: ${brl(c.costPerHa)} · Custo total: ${brl(c.totalCost)} · Custo por saca: ${brl(c.costPerBag)}`,
-      `Margem desejada: ${c.targetMarginPct}% · Preço necessário para essa margem: ${brl(c.targetPrice)}/saca`,
-      `Custos por grupo (R$/ha e % do custo): ${c.costBreakdown.map((b) => `${b.label}: ${brl(b.perHa)} (${Math.round(b.share)}%)`).join("; ")}`,
-      c.market
-        ? `Referência de mercado atual: ${brl(c.market.price)}/saca (${c.market.hint}; variação ${c.market.changePct !== null ? `${c.market.changePct.toFixed(1)}%` : "não informada"}). Com essa referência: receita ${brl(c.market.revenue)}, resultado ${brl(c.market.result)}, margem ${c.market.marginPct.toFixed(1)}%, margem por saca ${brl(c.market.marginPerBag)}. A referência é de bolsa convertida, não preço local.`
-        : "Não há cotação de referência disponível para esta cultura no momento.",
-    ].join("\n");
+    const linhas = describeSeason(data.context);
 
     const answer = await completeText(
       SYSTEM,
