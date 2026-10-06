@@ -28,3 +28,8 @@
 - [x] Fase 5 — Alertas personalizados de margem
   - [x] Soja e milho: aviso abaixo do ponto de equilíbrio ou do preço da meta
   - [x] Um aviso por dia por condição, com atalho ao simulador
+
+- [x] Fase 6 — Planos Grátis x Premium (sem cobrança) e relatórios reais
+  - [x] Página Planos, registro de interesse e limites do plano Grátis (no servidor)
+  - [x] Alertas de margem e exportação como Premium
+  - [x] Relatórios da safra gerados por IA, salvos, com PDF e Excel

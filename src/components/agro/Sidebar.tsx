@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BarChart3, CalendarDays, FileText, LayoutDashboard, MessageSquare, PackageOpen, ShieldCheck, Sprout, UserRound } from "lucide-react";
+import { BarChart3, CalendarDays, Crown, FileText, LayoutDashboard, MessageSquare, PackageOpen, ShieldCheck, Sprout, UserRound } from "lucide-react";
 import { useProfile } from "@/hooks/use-profile";
 
 type NavItem = { label: string; to: string; premium?: boolean; icon: typeof LayoutDashboard; group?: string };
@@ -15,6 +15,7 @@ const producerNav: NavItem[] = [
   { label: "Calendário Agrícola", to: "/calendario", icon: CalendarDays, group: "Apoio" },
   { label: "Segurança", to: "/seguranca", icon: ShieldCheck },
   { label: "Meu Perfil", to: "/perfil", icon: UserRound },
+  { label: "Planos", to: "/planos", icon: Crown },
 ];
 
 const buyerNav: NavItem[] = [

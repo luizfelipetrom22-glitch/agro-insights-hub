@@ -149,7 +149,14 @@ function SimuladorPage() {
       setScenarioNameDraft("");
       void queryClient.invalidateQueries({ queryKey: ["scenarios", session?.userId ?? ""] });
     },
-    onError: (error) => toast.error(error instanceof Error ? error.message : "Não foi possível salvar."),
+    onError: (error) => {
+      const msg = error instanceof Error ? error.message : "";
+      if (msg.includes("PLANO_GRATIS_LIMITE_CENARIOS")) {
+        toast.error("No plano Grátis você pode guardar 1 cenário. Exclua o atual ou conheça o Premium em Planos.");
+        return;
+      }
+      toast.error(msg || "Não foi possível salvar.");
+    },
   });
 
   const deleteScenario = useMutation({
