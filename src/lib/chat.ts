@@ -21,8 +21,11 @@ export async function getOrCreateConversation(target: ConversationTarget): Promi
 
   query = target.listingId ? query.eq("listing_id", target.listingId) : query.is("listing_id", null);
 
-  const { data: existing, error: findError } = await query.maybeSingle();
+  const { data: found, error: findError } = await query
+    .order("created_at", { ascending: true })
+    .limit(1);
   if (findError) throw findError;
+  const existing = found?.[0];
   if (existing) return existing as Conversation;
 
   const { data, error } = await supabase
@@ -35,7 +38,12 @@ export async function getOrCreateConversation(target: ConversationTarget): Promi
     })
     .select("*")
     .single();
-  if (error) throw error;
+  if (error) {
+    // Outra aba/clique criou a conversa ao mesmo tempo: reaproveita a existente.
+    const { data: retry } = await query.limit(1);
+    if (retry?.[0]) return retry[0] as Conversation;
+    throw error;
+  }
   return data as Conversation;
 }
 
