@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import { useTickers } from "@/hooks/use-market";
 import { seasonCompleteness, useProducerSeason } from "@/hooks/use-producer-season";
-import { formatMoney, formatPrice, seasonFinancialBase } from "@/lib/profit";
+import { seasonFinancialBase } from "@/lib/profit";
+import { buildMarginAlert, type MarginCondition } from "@/lib/margin-alert-message";
 
 /** Culturas com alerta de margem disponível (têm cotação de referência). */
 export const ALERT_CROPS = ["Soja", "Milho"] as const;
-export type MarginCondition = "abaixo_equilibrio" | "abaixo_meta";
+export type { MarginCondition };
 
 const alertsKey = (userId?: string) => ["margin-alerts", userId ?? ""];
 
@@ -89,33 +90,16 @@ export function useMarginAlertWatcher() {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
       for (const alert of active) {
-        const condition = alert.condition as MarginCondition;
-        const limit = condition === "abaixo_equilibrio" ? breakeven : target;
-        if (price >= limit) continue;
-        const type = `margin_alert:${condition}`;
+        const msg = buildMarginAlert(alert.condition as MarginCondition, crop, price, base);
+        if (!msg) continue;
         const { data: existing } = await supabase
           .from("notifications")
           .select("id")
-          .eq("type", type)
+          .eq("type", msg.type)
           .gte("created_at", startOfDay.toISOString())
           .limit(1);
         if (existing?.length) continue;
-        const gap = limit - price;
-        const title =
-          condition === "abaixo_equilibrio"
-            ? `🚨 ${crop}: referência abaixo do seu ponto de equilíbrio`
-            : `⚠️ ${crop}: referência abaixo do preço da sua meta`;
-        const body =
-          condition === "abaixo_equilibrio"
-            ? `A referência de bolsa está em ${formatPrice(price)}/sc, ${formatPrice(gap)} abaixo do seu custo de ${formatPrice(limit)}/sc. Prejuízo estimado na safra: ${formatMoney(gap * base.production)}.`
-            : `A referência de bolsa está em ${formatPrice(price)}/sc. Para sua margem de ${base.margin}% você precisa de ${formatPrice(limit)}/sc — faltam ${formatMoney(gap * base.production)} na safra.`;
-        await supabase.from("notifications").insert({
-          user_id: userId,
-          type,
-          title,
-          body,
-          link: `/simulador?preco=${price.toFixed(2)}`,
-        });
+        await supabase.from("notifications").insert({ user_id: userId, ...msg });
       }
       void qc.invalidateQueries({ queryKey: ["notifications", userId] });
     })();

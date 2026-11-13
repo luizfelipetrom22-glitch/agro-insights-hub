@@ -28,6 +28,7 @@ import { Route as AuthenticatedRelatoriosRouteImport } from './routes/_authentic
 import { Route as AuthenticatedSegurancaRouteImport } from './routes/_authenticated/seguranca'
 import { Route as AuthenticatedSimuladorRouteImport } from './routes/_authenticated/simulador'
 import { Route as ProdutorIdRouteImport } from './routes/produtor.$id'
+import { Route as ApiPublicCronMarginAlertsRouteImport } from './routes/api/public/cron/margin-alerts'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -124,6 +125,12 @@ const ProdutorIdRoute = ProdutorIdRouteImport.update({
   path: '/produtor/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronMarginAlertsRoute =
+  ApiPublicCronMarginAlertsRouteImport.update({
+    id: '/api/public/cron/margin-alerts',
+    path: '/api/public/cron/margin-alerts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/seguranca': typeof AuthenticatedSegurancaRoute
   '/simulador': typeof AuthenticatedSimuladorRoute
   '/produtor/$id': typeof ProdutorIdRoute
+  '/api/public/cron/margin-alerts': typeof ApiPublicCronMarginAlertsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/seguranca': typeof AuthenticatedSegurancaRoute
   '/simulador': typeof AuthenticatedSimuladorRoute
   '/produtor/$id': typeof ProdutorIdRoute
+  '/api/public/cron/margin-alerts': typeof ApiPublicCronMarginAlertsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,6 +195,7 @@ export interface FileRoutesById {
   '/_authenticated/seguranca': typeof AuthenticatedSegurancaRoute
   '/_authenticated/simulador': typeof AuthenticatedSimuladorRoute
   '/produtor/$id': typeof ProdutorIdRoute
+  '/api/public/cron/margin-alerts': typeof ApiPublicCronMarginAlertsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/simulador'
     | '/produtor/$id'
+    | '/api/public/cron/margin-alerts'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/simulador'
     | '/produtor/$id'
+    | '/api/public/cron/margin-alerts'
   id:
     | '__root__'
     | '/'
@@ -249,6 +261,7 @@ export interface FileRouteTypes {
     | '/_authenticated/seguranca'
     | '/_authenticated/simulador'
     | '/produtor/$id'
+    | '/api/public/cron/margin-alerts'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -256,6 +269,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ProdutorIdRoute: typeof ProdutorIdRoute
+  ApiPublicCronMarginAlertsRoute: typeof ApiPublicCronMarginAlertsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -393,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutorIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/margin-alerts': {
+      id: '/api/public/cron/margin-alerts'
+      path: '/api/public/cron/margin-alerts'
+      fullPath: '/api/public/cron/margin-alerts'
+      preLoaderRoute: typeof ApiPublicCronMarginAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -440,6 +461,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ProdutorIdRoute: ProdutorIdRoute,
+  ApiPublicCronMarginAlertsRoute: ApiPublicCronMarginAlertsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
