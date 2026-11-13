@@ -753,6 +753,8 @@ export type Database = {
         Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
       }
+      is_profile_avatar: { Args: { _name: string }; Returns: boolean }
+      is_published_listing_photo: { Args: { _name: string }; Returns: boolean }
       open_reports_count: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
