@@ -29,6 +29,13 @@
       "when": 1792631279645,
       "tag": "0003_restrict_notification_inserts",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794531698143,
+      "tag": "0004_restrict_public_storage_reads",
+      "breakpoints": true
     }
   ]
 }
